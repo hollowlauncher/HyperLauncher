@@ -8,6 +8,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.gson.JsonParseException;
 import com.kdt.mcgui.ProgressLayout;
 
 import net.kdt.pojavlaunch.JAssetInfo;
@@ -63,7 +64,9 @@ public class MinecraftDownloader extends Downloader {
             try {
                 downloadGame(assetManager, version, realVersion);
                 listener.onDownloadDone();
-            }catch(RuntimeException e) {
+            } catch(JsonParseException e) {
+                listener.onDownloadFailed(e); // Handled separately from the general case because it subclasses RuntimeException. Ugh.
+            } catch(RuntimeException e) {
                 throw e; // log fatal errors to Google Play
             } catch (Exception e) {
                 listener.onDownloadFailed(e);
@@ -185,11 +188,11 @@ public class MinecraftDownloader extends Downloader {
      * @param versionName The version ID (necessary)
      * @throws IOException if the download of any of the metadata files fails
      */
-    private void downloadAndProcessMetadata(AssetManager assetManager, JMinecraftVersionList.Version verInfo, String versionName) throws IOException, MirrorTamperedException, RuntimeSelectionException {
+    private void downloadAndProcessMetadata(AssetManager assetManager, JMinecraftVersionList.Version verInfo, String versionName) throws IOException, MirrorTamperedException, RuntimeSelectionException, JsonParseException {
         File versionJsonFile;
         if(verInfo != null) versionJsonFile = downloadGameJson(verInfo);
         else versionJsonFile = createGameJsonPath(versionName);
-        if(versionJsonFile.canRead())  {
+        if(versionJsonFile.canRead()) {
             verInfo = JSONUtils.readFromFile(versionJsonFile, JMinecraftVersionList.Version.class);
             if(verInfo == null) throw new IOException("Deserialized json is null. Contact developer.");
         } else {
