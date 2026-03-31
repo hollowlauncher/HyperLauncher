@@ -15,6 +15,7 @@ import androidx.preference.PreferenceFragmentCompat;
 import net.kdt.pojavlaunch.LauncherActivity;
 import git.artdeell.mojo.R;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
+import net.kdt.pojavlaunch.utils.PermissionUtils;
 
 /**
  * Preference for the main screen, any sub-screen should inherit this class for consistent behavior,
@@ -38,10 +39,11 @@ public class LauncherPreferenceFragment extends PreferenceFragmentCompat impleme
         Preference mRequestNotificationPermissionPreference = requirePreference("notification_permission_request");
         Activity activity = getActivity();
         if(activity instanceof LauncherActivity) {
-            LauncherActivity launcherActivity = (LauncherActivity)activity;
-            mRequestNotificationPermissionPreference.setVisible(!launcherActivity.checkForPermission(33, Manifest.permission.POST_NOTIFICATIONS));
+            mRequestNotificationPermissionPreference.setVisible(!PermissionUtils.checkForPermission(activity,33, Manifest.permission.POST_NOTIFICATIONS));
             mRequestNotificationPermissionPreference.setOnPreferenceClickListener(preference -> {
-                launcherActivity.askForPermission(33, ()->mRequestNotificationPermissionPreference.setVisible(false), Manifest.permission.POST_NOTIFICATIONS);
+                PermissionUtils.askForPermission(33, res -> {
+                    if (res) mRequestNotificationPermissionPreference.setVisible(false);
+                }, Manifest.permission.POST_NOTIFICATIONS);
                 return true;
             });
         }else{

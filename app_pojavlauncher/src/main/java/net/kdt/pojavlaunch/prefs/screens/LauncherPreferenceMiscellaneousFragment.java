@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.preference.Preference;
 
@@ -11,6 +12,7 @@ import git.artdeell.mojo.R;
 
 import net.kdt.pojavlaunch.LauncherActivity;
 import net.kdt.pojavlaunch.utils.GLInfoUtils;
+import net.kdt.pojavlaunch.utils.PermissionUtils;
 import net.kdt.pojavlaunch.utils.RendererCompatUtil;
 
 public class LauncherPreferenceMiscellaneousFragment extends LauncherPreferenceFragment {
@@ -28,10 +30,12 @@ public class LauncherPreferenceMiscellaneousFragment extends LauncherPreferenceF
         Preference mRequestMicrophonePermissionPreference = requirePreference("microphoneAccessRequest");
         Activity activity = getActivity();
         if(activity instanceof LauncherActivity) {
-            LauncherActivity launcherActivity = (LauncherActivity)activity;
-            mRequestMicrophonePermissionPreference.setVisible(!launcherActivity.checkForPermission(23, Manifest.permission.RECORD_AUDIO));
+            mRequestMicrophonePermissionPreference.setVisible(!PermissionUtils.checkForPermission(activity, 23, Manifest.permission.RECORD_AUDIO));
             mRequestMicrophonePermissionPreference.setOnPreferenceClickListener(preference -> {
-                launcherActivity.askForPermission(23, ()->mRequestMicrophonePermissionPreference.setVisible(false), Manifest.permission.RECORD_AUDIO);
+                PermissionUtils.askForPermission(23, res -> {
+                    mRequestMicrophonePermissionPreference.setVisible(false);
+                    if (!res) Toast.makeText(activity, R.string.notification_permission_toast, Toast.LENGTH_LONG).show(); // reusing notification toast here
+                }, Manifest.permission.RECORD_AUDIO);
                 return true;
             });
         } else {

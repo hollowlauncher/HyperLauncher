@@ -45,6 +45,7 @@ import net.kdt.pojavlaunch.tasks.AsyncMinecraftDownloader;
 import net.kdt.pojavlaunch.tasks.AsyncVersionList;
 import net.kdt.pojavlaunch.tasks.MinecraftDownloader;
 import net.kdt.pojavlaunch.utils.NotificationUtils;
+import net.kdt.pojavlaunch.utils.PermissionUtils;
 
 import java.lang.ref.WeakReference;
 
@@ -151,7 +152,6 @@ public class LauncherActivity extends BaseActivity {
     };
 
     private ActivityResultLauncher<String> mRequestPermissionLauncher;
-    private WeakReference<Runnable> mRequestPermissionRunnable;
 
     @Override
     protected boolean shouldIgnoreNotch() {
@@ -169,16 +169,9 @@ public class LauncherActivity extends BaseActivity {
         setContentView(R.layout.activity_pojav_launcher);
 
         IconCacheJanitor.runJanitor();
-        mRequestPermissionLauncher = registerForActivityResult(
-                new ActivityResultContracts.RequestPermission(),
-                isAllowed -> {
-                    if(!isAllowed) handleNoNotificationPermission();
-                    else {
-                        Runnable runnable = Tools.getWeakReference(mRequestPermissionRunnable);
-                        if(runnable != null) runnable.run();
-                    }
-                }
-        );
+
+        PermissionUtils.init(this);
+
         getWindow().setBackgroundDrawable(null);
         bindViews();
         checkNotificationPermission();
@@ -269,24 +262,26 @@ public class LauncherActivity extends BaseActivity {
 
     private void checkNotificationPermission() {
         if(LauncherPreferences.PREF_SKIP_NOTIFICATION_PERMISSION_CHECK ||
-            checkForPermission(33, Manifest.permission.POST_NOTIFICATIONS)) {
+            PermissionUtils.checkForPermission(this,33, Manifest.permission.POST_NOTIFICATIONS)) {
             return;
         }
-
         if(ActivityCompat.shouldShowRequestPermissionRationale(
                 this,
                 Manifest.permission.POST_NOTIFICATIONS)) {
             showNotificationPermissionReasoning();
             return;
         }
-        askForPermission(33, null, Manifest.permission.POST_NOTIFICATIONS);
+        PermissionUtils.askForPermission(33, res -> { if (!res) this.handleNoNotificationPermission(); },
+                Manifest.permission.POST_NOTIFICATIONS);
     }
 
     private void showNotificationPermissionReasoning() {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.notification_permission_dialog_title)
                 .setMessage(R.string.notification_permission_dialog_text)
-                .setPositiveButton(android.R.string.ok, (d, w) -> askForPermission(33, null, Manifest.permission.POST_NOTIFICATIONS))
+                .setPositiveButton(android.R.string.ok, (d, w) ->
+                        PermissionUtils.askForPermission(33, res -> { if (!res) this.handleNoNotificationPermission(); },
+                                Manifest.permission.POST_NOTIFICATIONS))
                 .setNegativeButton(android.R.string.cancel, (d, w)-> handleNoNotificationPermission())
                 .show();
     }
@@ -297,20 +292,6 @@ public class LauncherActivity extends BaseActivity {
                 .putBoolean(LauncherPreferences.PREF_KEY_SKIP_NOTIFICATION_CHECK, true)
                 .apply();
         Toast.makeText(this, R.string.notification_permission_toast, Toast.LENGTH_LONG).show();
-    }
-
-    public boolean checkForPermission(int minApi, final String permission) {
-        return Build.VERSION.SDK_INT < minApi || ContextCompat.checkSelfPermission(
-                this,
-                permission) != PackageManager.PERMISSION_DENIED;
-    }
-
-    public void askForPermission(int minApi, Runnable onSuccessRunnable, final String permission) {
-        if(Build.VERSION.SDK_INT < 33) return;
-        if(onSuccessRunnable != null) {
-            mRequestPermissionRunnable = new WeakReference<>(onSuccessRunnable);
-        }
-        mRequestPermissionLauncher.launch(permission);
     }
 
     /** Stuff all the view boilerplate here */
