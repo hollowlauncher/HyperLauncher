@@ -1,0 +1,105 @@
+package git.artdeell.dnbootstrap.glfw;
+
+import android.graphics.Bitmap;
+import android.util.Log;
+import android.view.Surface;
+
+import java.lang.ref.WeakReference;
+import java.nio.ByteBuffer;
+import java.util.Collections;
+import java.util.Set;
+import java.util.WeakHashMap;
+
+import git.artdeell.dnbootstrap.utils.Utils;
+
+public class GLFW {
+    private static final Set<GrabListener> grabListeners = Collections.newSetFromMap(new WeakHashMap<>());
+    private static WeakReference<CursorImplementor> cursorImpl;
+    private static boolean grabbing = false;
+    private static GLFWCursor cursor;
+    public static double cursorX, cursorY;
+
+    static {
+        System.loadLibrary("glfw");
+        GLFW.initialize();
+    }
+
+    public static void setCursorImpl(CursorImplementor cursorImpl) {
+        GLFW.cursorImpl = new WeakReference<>(cursorImpl);
+        addGrabListener(cursorImpl);
+    }
+
+    public static void addGrabListener(GrabListener grabListener) {
+        grabListeners.add(grabListener);
+    }
+
+    public static boolean isGrabbing() {
+        return grabbing;
+    }
+
+    public static GLFWCursor getCursor() {
+        return cursor;
+    }
+
+    public static void sendMousePos() {
+        if(!grabbing) {
+            if(cursorX < 0) cursorX = 0;
+            else if(cursorX > 1) cursorX = 1;
+            if(cursorY < 0) cursorY = 0;
+            else if(cursorY > 1) cursorY = 1;
+        }
+        CursorImplementor cursor = Utils.getWeakReference(GLFW.cursorImpl);
+        if(cursor != null) cursor.onCursorPosition();
+        sendMousePosition0(cursorX, cursorY);
+    }
+
+    @SuppressWarnings("unused") // Used from native
+    private static void receiveGrabState(boolean isGrabbing) {
+        GLFW.grabbing = isGrabbing;
+        for(GrabListener grabListener : grabListeners) grabListener.onGrabState(isGrabbing);
+        cursorX = cursorY = 0.5;
+        sendMousePos();
+    }
+
+    @SuppressWarnings("unused") // Used from native
+    private static void receiveCursorPos(double x, double y) {
+        cursorX = x;
+        cursorY = y;
+        CursorImplementor cursor = Utils.getWeakReference(GLFW.cursorImpl);
+        if(cursor != null) cursor.onCursorPosition();
+    }
+
+    @SuppressWarnings("unused") // Used from native
+    private static GLFWCursor loadCursor(ByteBuffer imageBytes, int width, int height, int xhot, int yhot) {
+        try {
+            Bitmap cursorBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            cursorBitmap.copyPixelsFromBuffer(imageBytes);
+            return new GLFWCursor(cursorBitmap, xhot, yhot);
+        }catch (Throwable t) {
+            Log.w("GLFW", "Failed to load cursor", t);
+            return null;
+        }
+    }
+
+    @SuppressWarnings("unused") // Used from native
+    private static void useCursor(GLFWCursor glfwCursor) {
+        GLFW.cursor = glfwCursor;
+        CursorImplementor cursor = Utils.getWeakReference(GLFW.cursorImpl);
+        if(cursor != null) cursor.onCursorChanged();
+    }
+
+    public static void sendKeyEvent(int glfwCode, boolean state, int mods) {
+        sendKeyEvent(glfwCode, state ? 1 : 0, mods);
+    }
+
+    public static native void initialize();
+    private static native void sendMousePosition0(double x, double y);
+    public static native void sendKeyEvent(int glfwCode, int state, int mods);
+    public static native void sendRawKeyEvent(int androidCode, int state, int mods, char codepoint);
+    public static native void sendMouseEvent(int glfwMouseKey, int state, int mods);
+    public static native void sendBulkUnicodeEvent(String input, int mods);
+    public static native void sendScrollEvent(double xoffset, double yoffset);
+    public static native void nativeSurfaceCreated(Surface surface, int width, int height);
+    public static native void nativeSurfaceDestroyed();
+    public static native void nativeSetWindowSize(int width, int height);
+}

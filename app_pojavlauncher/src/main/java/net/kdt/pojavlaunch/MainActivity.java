@@ -6,7 +6,6 @@ import static net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_ENABLE_GYRO;
 import static net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_SUSTAINED_PERFORMANCE;
 import static net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_USE_ALTERNATE_SURFACE;
 import static net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_VIRTUAL_MOUSE_START;
-import static org.lwjgl.glfw.CallbackBridge.sendKeyPress;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -53,7 +52,6 @@ import net.kdt.pojavlaunch.customcontrols.keyboard.LwjglCharSender;
 import net.kdt.pojavlaunch.customcontrols.keyboard.TouchCharInput;
 import net.kdt.pojavlaunch.customcontrols.mouse.GyroControl;
 import net.kdt.pojavlaunch.customcontrols.mouse.HotbarView;
-import net.kdt.pojavlaunch.customcontrols.mouse.Touchpad;
 import net.kdt.pojavlaunch.instances.Instance;
 import net.kdt.pojavlaunch.instances.Instances;
 import net.kdt.pojavlaunch.lifecycle.ContextExecutor;
@@ -71,7 +69,10 @@ import org.lwjgl.glfw.CallbackBridge;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 
+import git.artdeell.dnbootstrap.glfw.GLFW;
+import git.artdeell.dnbootstrap.glfw.GLFWCursorView;
 import git.artdeell.mojo.R;
 
 public class MainActivity extends BaseActivity implements ControlButtonMenuListener, EditorExitable, ServiceConnection {
@@ -80,7 +81,8 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
 
     public static TouchCharInput touchCharInput;
     private MinecraftGLSurface minecraftGLView;
-    private static Touchpad touchpad;
+    private static WeakReference<GLFWCursorView> weakCursor;
+    private GLFWCursorView cursor;
     private LoggerView loggerView;
     private DrawerLayout drawerLayout;
     private ListView navDrawer;
@@ -117,8 +119,7 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
         // Start the service a bit early
         ContextCompat.startForegroundService(this, gameServiceIntent);
         initLayout(R.layout.activity_basemain);
-        CallbackBridge.addGrabListener(touchpad);
-        CallbackBridge.addGrabListener(minecraftGLView);
+        GLFW.addGrabListener(minecraftGLView);
 
         mGyroControl = new GyroControl(this);
 
@@ -198,11 +199,7 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
             final String finalVersion = version;
             minecraftGLView.setSurfaceReadyListener(() -> {
                 try {
-                    // Setup virtual mouse right before launching
-                    if (PREF_VIRTUAL_MOUSE_START) {
-                        touchpad.post(() -> touchpad.switchState());
-                    }
-
+                    if(!PREF_VIRTUAL_MOUSE_START) cursor.setVisibility(View.GONE);
                     runCraft(finalVersion);
                 }catch (Throwable e){
                     Tools.showErrorRemote(e);
@@ -244,7 +241,8 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
     private void bindValues(){
         mControlLayout = findViewById(R.id.main_control_layout);
         minecraftGLView = findViewById(R.id.main_game_render_view);
-        touchpad = findViewById(R.id.main_touchpad);
+        cursor = findViewById(R.id.main_touchpad);
+        weakCursor = new WeakReference<>(cursor);
         drawerLayout = findViewById(R.id.main_drawer_options);
         navDrawer = findViewById(R.id.main_navigation_view);
         loggerView = findViewById(R.id.mainLoggerView);
@@ -256,40 +254,40 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
     @Override
     public void onResume() {
         super.onResume();
+        ContextExecutor.setActivity(this);
         if(PREF_ENABLE_GYRO) mGyroControl.enable();
-        CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_HOVERED, 1);
+        //CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_HOVERED, 1);
     }
 
     @Override
     protected void onPause() {
+        ContextExecutor.clearActivity();
         mGyroControl.disable();
         if (CallbackBridge.isGrabbing()){
-            sendKeyPress(LwjglGlfwKeycode.GLFW_KEY_ESCAPE);
+            CallbackBridge.sendKeyPress(LwjglGlfwKeycode.GLFW_KEY_ESCAPE);
         }
         if(mQuickSettingSideDialog != null) {
             mQuickSettingSideDialog.cancel();
         }
-        CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_HOVERED, 0);
+        //CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_HOVERED, 0);
         super.onPause();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_VISIBLE, 1);
+        //CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_VISIBLE, 1);
     }
 
     @Override
     protected void onStop() {
-        CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_VISIBLE, 0);
+        //CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_VISIBLE, 0);
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        CallbackBridge.removeGrabListener(touchpad);
-        CallbackBridge.removeGrabListener(minecraftGLView);
         ContextExecutor.clearActivity();
     }
 
@@ -398,10 +396,22 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
 
     public static void toggleMouse(Context ctx) {
         if (CallbackBridge.isGrabbing()) return;
+        GLFWCursorView cursorView = Tools.getWeakReference(weakCursor);
+        if(cursorView == null) return;
+        int toastString = 0;
+        switch (cursorView.getVisibility()) {
+            case View.GONE:
+            case View.INVISIBLE:
+                toastString = R.string.control_mouseon;
+                cursorView.setVisibility(View.VISIBLE);
+                break;
+            case View.VISIBLE:
+                toastString = R.string.control_mouseoff;
+                cursorView.setVisibility(View.GONE);
+                break;
+        }
 
-        Toast.makeText(ctx, touchpad.switchState()
-                        ? R.string.control_mouseon : R.string.control_mouseoff,
-                Toast.LENGTH_SHORT).show();
+        if(toastString != 0) Toast.makeText(ctx, toastString, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -417,7 +427,7 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
         if(!(handleEvent = minecraftGLView.processKeyEvent(event))) {
             if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && !touchCharInput.isEnabled()) {
                 if(event.getAction() != KeyEvent.ACTION_UP) return true; // We eat it anyway
-                sendKeyPress(LwjglGlfwKeycode.GLFW_KEY_ESCAPE);
+                CallbackBridge.sendKeyPress(LwjglGlfwKeycode.GLFW_KEY_ESCAPE);
                 return true;
             }
         }
@@ -430,8 +440,7 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
 
     @Keep
     public static void openLink(String link) {
-        Context ctx = touchpad.getContext(); // no more better way to obtain a context statically
-        ((Activity)ctx).runOnUiThread(() -> {
+        ContextExecutor.executeActivity(ctx->{
             try {
                 if(link.startsWith("file:")) {
                     int truncLength = 5;
@@ -451,8 +460,7 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
 
     @SuppressWarnings("unused") //TODO: actually use it
     public static void openPath(String path) {
-        Context ctx = touchpad.getContext(); // no more better way to obtain a context statically
-        ((Activity)ctx).runOnUiThread(() -> {
+        ContextExecutor.executeActivity(ctx->{
             try {
                 Tools.openPath(ctx, new File(path), false);
             } catch (Throwable th) {
@@ -522,7 +530,7 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
     public void onServiceConnected(ComponentName name, IBinder service) {
         GameService.LocalBinder localBinder = (GameService.LocalBinder) service;
         mServiceBinder = localBinder;
-        minecraftGLView.start(localBinder.isActive, touchpad);
+        minecraftGLView.start(localBinder.isActive, cursor);
         localBinder.isActive = true;
     }
 

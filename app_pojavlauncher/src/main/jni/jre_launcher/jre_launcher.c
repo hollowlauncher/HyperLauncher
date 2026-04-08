@@ -198,8 +198,8 @@ extern bool installClassLoaderHooks(JNIEnv *env, JNIEnv* vm_env);
 JNIEXPORT jboolean JNICALL
 Java_net_kdt_pojavlaunch_utils_jre_JavaRunner_nativeLoadJVM(JNIEnv *env, jclass clazz, jstring vmpath, jobjectArray java_args, jstring mainClass, jobjectArray appArgs, jboolean hasJavaAgents) {
     java_vm_t java_vm;
-    setup_abort_wait();
-    prepareSignalHandlers();
+    //setup_abort_wait();
+    //prepareSignalHandlers();
     if(!initializeJavaVM(&java_vm, env, vmpath, java_args, hasJavaAgents)) return JNI_FALSE;
     JNIEnv *vm_env = java_vm.vm_env;
     if(apiRequiresHints()) {

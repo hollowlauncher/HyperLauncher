@@ -6,8 +6,6 @@
 
 #include <android/api-level.h>
 
-#include "environ/environ.h"
-
 #include <dlfcn.h>
 #include <string.h>
 #include <stdlib.h>
@@ -15,7 +13,9 @@
 #define TAG __FILE_NAME__
 #include <log.h>
 
-extern void* maybe_load_vulkan();
+void* maybe_load_vulkan() {
+    abort(); // TODO
+}
 
 /**
  * Basically a verbatim implementation of ndlopen(), found at

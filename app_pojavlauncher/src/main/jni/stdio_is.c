@@ -8,7 +8,6 @@
 #include <string.h>
 #include <errno.h>
 #include <stdlib.h>
-#include <environ/environ.h>
 
 #include "stdio_is.h"
 
@@ -37,10 +36,10 @@ static bool recordBuffer(char* buf, ssize_t len) {
     return true;
 }
 
-static void *logger_thread() {
+static void *logger_thread(void* param) {
     JNIEnv *env;
     jstring writeString;
-    JavaVM* dvm = pojav_environ->dalvikJavaVMPtr;
+    JavaVM* dvm = (JavaVM*) param;
     (*dvm)->AttachCurrentThread(dvm, &env, NULL);
     ssize_t  rsize;
     char buf[2050];
@@ -59,6 +58,8 @@ static void *logger_thread() {
     (*dvm)->DetachCurrentThread(dvm);
     return NULL;
 }
+
+
 JNIEXPORT void JNICALL
 Java_net_kdt_pojavlaunch_Logger_begin(JNIEnv *env, __attribute((unused)) jclass clazz, jstring logPath) {
     if(latestlog_fd != -1) {
@@ -91,8 +92,11 @@ Java_net_kdt_pojavlaunch_Logger_begin(JNIEnv *env, __attribute((unused)) jclass 
     }
     (*env)->ReleaseStringUTFChars(env, logPath, logFilePath);
 
+    JavaVM* vm = NULL;
+    (*env)->GetJavaVM(env, &vm);
+
     /* spawn the logging thread */
-    int result = pthread_create(&logger, 0, logger_thread, 0);
+    int result = pthread_create(&logger, 0, logger_thread, vm);
     if(result != 0) {
         close(latestlog_fd);
         (*env)->ThrowNew(env, ioeClass, strerror(result));

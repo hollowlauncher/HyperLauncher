@@ -151,10 +151,7 @@ public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText 
                     mCharacterSender.sendBackspace();
                 }
 
-                for(int i=start, count = 0; count < lengthAfter; ++i){
-                    mCharacterSender.sendChar(text.charAt(i));
-                    ++count;
-                }
+                mCharacterSender.sendChars(text.subSequence(start, lengthAfter));
             }
         }
 

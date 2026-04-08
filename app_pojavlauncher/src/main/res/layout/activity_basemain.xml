@@ -27,7 +27,7 @@
 				android:defaultFocusHighlightEnabled="false"
                 tools:ignore="UnusedAttribute" />
 
-			<net.kdt.pojavlaunch.customcontrols.mouse.Touchpad
+			<git.artdeell.dnbootstrap.glfw.GLFWCursorView
 				android:layout_height="match_parent"
 				android:layout_width="match_parent"
 				android:orientation="vertical"

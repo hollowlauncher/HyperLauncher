@@ -190,9 +190,6 @@ public class GameRunner {
         int requiredJavaVersion = 8;
         if(versionInfo.javaVersion != null) requiredJavaVersion = versionInfo.javaVersion.majorVersion;
 
-        // Minecraft 1.13+
-        CallbackBridge.nativeSetUseInputStackQueue(versionInfo.arguments != null);
-
         Runtime runtime = MultiRTUtils.forceReread(pickRuntime(instance, requiredJavaVersion));
 
         // Pre-process specific files
@@ -377,24 +374,21 @@ public class GameRunner {
     }
 
     private static List<String> generateLaunchClassPath(JMinecraftVersionList.Version info, String actualname) {
-        File lwjgl3Folder = new File(Tools.DIR_GAME_HOME, "lwjgl3");
-        File glfwFatJar = new File(lwjgl3Folder, "lwjgl-glfw-classes.jar");
-        File lwjglxJar = new File(lwjgl3Folder, "lwjgl-lwjglx.jar");
-        if(!glfwFatJar.exists() || !lwjglxJar.exists()) throw new RuntimeException("Required LWJGL3 files not found");
 
-        ArrayList<String> classpath = new ArrayList<>(info.libraries.length + 3);
-        // LWJGL3 comes first - must override any custom LWJGL3 on the classpath
-        classpath.add(glfwFatJar.getAbsolutePath());
-        // Custom version libraries are inbetween
-        boolean usesLWJGL3 = generateLibClasspath(info, classpath);
-        // Client is last before LWJGL2 - all libraries must have higher precedence than it.
-        classpath.add(getClientClasspath(actualname));
-        // Don't add LWJGLX when the client doesn't use LWJGL2
-        if(!usesLWJGL3) {
-            // LWJGLX (custom LWJGL2) comes last - anything in the client or libs should override it
-            classpath.add(lwjglxJar.getAbsolutePath());
+
+        File lwjgl3Folder = new File(Tools.DIR_GAME_HOME, "lwjgl3");
+        File[] lwjglFiles = lwjgl3Folder.listFiles((f,n)->n.endsWith(".jar"));
+
+        ArrayList<String> classpath = new ArrayList<>(info.libraries.length + lwjglFiles.length);
+
+        for(File f : lwjglFiles) {
+            classpath.add(f.getAbsolutePath());
         }
-        classpath.trimToSize();
+
+        generateLibClasspath(info, classpath);
+
+        classpath.add(getClientClasspath(actualname));
+
         return classpath;
     }
 

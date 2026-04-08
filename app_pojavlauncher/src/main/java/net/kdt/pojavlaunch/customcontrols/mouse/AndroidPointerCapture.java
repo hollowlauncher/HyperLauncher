@@ -14,10 +14,12 @@ import net.kdt.pojavlaunch.prefs.LauncherPreferences;
 
 import org.lwjgl.glfw.CallbackBridge;
 
+import git.artdeell.dnbootstrap.glfw.GLFW;
+
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class AndroidPointerCapture implements ViewTreeObserver.OnWindowFocusChangeListener, View.OnCapturedPointerListener {
     private static final float TOUCHPAD_SCROLL_THRESHOLD = 1;
-    private final AbstractTouchpad mTouchpad;
+    private final View mTouchpadView;
     private final View mHostView;
     private final float mMousePrescale = Tools.dpToPx(1);
     private final PointerTracker mPointerTracker = new PointerTracker();
@@ -27,15 +29,15 @@ public class AndroidPointerCapture implements ViewTreeObserver.OnWindowFocusChan
     private int mInputDeviceIdentifier;
     private boolean mDeviceSupportsRelativeAxis;
 
-    public AndroidPointerCapture(AbstractTouchpad touchpad, View hostView) {
-        this.mTouchpad = touchpad;
+    public AndroidPointerCapture(View touchpad, View hostView) {
+        this.mTouchpadView = touchpad;
         this.mHostView = hostView;
         hostView.setOnCapturedPointerListener(this);
         hostView.getViewTreeObserver().addOnWindowFocusChangeListener(this);
     }
 
     private void enableTouchpadIfNecessary() {
-        if(!mTouchpad.getDisplayState()) mTouchpad.enable(true);
+        if(mTouchpadView.getVisibility() != View.VISIBLE) mTouchpadView.setVisibility(View.VISIBLE);
     }
 
     public void handleAutomaticCapture() {
@@ -89,16 +91,15 @@ public class AndroidPointerCapture implements ViewTreeObserver.OnWindowFocusChan
             mVector[0] *= mMousePrescale;
             mVector[1] *= mMousePrescale;
             if(event.getPointerCount() < 2) {
-                mTouchpad.applyMotionVector(mVector);
                 mScroller.resetScrollOvershoot();
             } else {
                 mScroller.performScroll(mVector);
             }
         } else {
             // Position is updated by many events, hence it is send regardless of the event value
-            CallbackBridge.mouseX += (mVector[0] * LauncherPreferences.PREF_SCALE_FACTOR);
-            CallbackBridge.mouseY += (mVector[1] * LauncherPreferences.PREF_SCALE_FACTOR);
-            CallbackBridge.sendCursorPos(CallbackBridge.mouseX, CallbackBridge.mouseY);
+            GLFW.cursorX += mVector[0] / view.getWidth();
+            GLFW.cursorY += mVector[1] / view.getHeight();
+            GLFW.sendMousePos();
         }
 
         switch (event.getActionMasked()) {

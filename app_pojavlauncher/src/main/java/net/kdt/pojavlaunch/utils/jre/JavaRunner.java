@@ -277,7 +277,7 @@ public class JavaRunner {
         }
         runtimeArgs.add(classpathBuilder.toString());
 
-        JREUtils.initializeHooks();
+        //JREUtils.initializeHooks();
 
         setImmutableEnvVars(runtimeHomeDir);
         relocateLdLibPath(vmPath, null);

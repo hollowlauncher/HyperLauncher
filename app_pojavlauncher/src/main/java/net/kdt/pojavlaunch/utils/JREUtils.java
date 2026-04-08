@@ -265,14 +265,10 @@ public class JREUtils {
     public static native int chdir(String path);
     public static native boolean dlopen(String libPath);
     public static native void setLdLibraryPath(String ldLibraryPath);
-    public static native void setupBridgeWindow(Object surface);
-    public static native void releaseBridgeWindow();
-    public static native void applyWindowSize();
-    public static native void initializeHooks();
+    //public static native void initializeHooks();
     // Obtain AWT screen pixels to render on Android SurfaceView
     public static native boolean renderAWTScreenFrame(ByteBuffer tempBuffer);
     static {
-        System.loadLibrary("exithook");
         System.loadLibrary("pojavexec");
         System.loadLibrary("pojavexec_awt");
     }
