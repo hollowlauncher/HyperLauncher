@@ -27,8 +27,6 @@ import net.kdt.pojavlaunch.utils.OldVersionsUtils;
 import net.kdt.pojavlaunch.utils.RendererCompatUtil;
 import net.kdt.pojavlaunch.value.DependentLibrary;
 
-import org.lwjgl.glfw.CallbackBridge;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;

@@ -34,7 +34,8 @@
 				android:id="@+id/main_touchpad"
 				android:focusable="false"
 				android:translationZ="1dp"
-				android:visibility="gone"/>
+				android:visibility="gone"
+                app:defaultCursorDrawable="@drawable/ic_mouse_pointer"/>
 
 
 			<net.kdt.pojavlaunch.customcontrols.keyboard.TouchCharInput

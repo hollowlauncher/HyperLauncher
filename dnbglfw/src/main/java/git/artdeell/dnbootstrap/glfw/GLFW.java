@@ -15,6 +15,7 @@ import git.artdeell.dnbootstrap.utils.Utils;
 public class GLFW {
     private static final Set<GrabListener> grabListeners = Collections.newSetFromMap(new WeakHashMap<>());
     private static WeakReference<CursorImplementor> cursorImpl;
+    private static WeakReference<ClipboardProvider> clipboardImpl;
     private static boolean grabbing = false;
     private static GLFWCursor cursor;
     public static double cursorX, cursorY;
@@ -27,6 +28,10 @@ public class GLFW {
     public static void setCursorImpl(CursorImplementor cursorImpl) {
         GLFW.cursorImpl = new WeakReference<>(cursorImpl);
         addGrabListener(cursorImpl);
+    }
+
+    public static void setClipboardImpl(ClipboardProvider clipboardImpl) {
+        GLFW.clipboardImpl = new WeakReference<>(clipboardImpl);
     }
 
     public static void addGrabListener(GrabListener grabListener) {
@@ -88,6 +93,20 @@ public class GLFW {
         if(cursor != null) cursor.onCursorChanged();
     }
 
+    @SuppressWarnings("unused") // Used from native
+    private static String getClipboardString() {
+        ClipboardProvider clipboardProvider = Utils.getWeakReference(clipboardImpl);
+        if(clipboardProvider == null) return null;
+        return clipboardProvider.getClipboardString();
+    }
+
+    @SuppressWarnings("unused") // Used from native
+    private static void setClipboardString(String str) {
+        ClipboardProvider clipboardProvider = Utils.getWeakReference(clipboardImpl);
+        if(clipboardProvider == null) return;
+        clipboardProvider.setClipboardString(str);
+    }
+
     public static void sendKeyEvent(int glfwCode, boolean state, int mods) {
         sendKeyEvent(glfwCode, state ? 1 : 0, mods);
     }
@@ -99,7 +118,7 @@ public class GLFW {
     public static native void sendMouseEvent(int glfwMouseKey, int state, int mods);
     public static native void sendBulkUnicodeEvent(String input, int mods);
     public static native void sendScrollEvent(double xoffset, double yoffset);
-    public static native void nativeSurfaceCreated(Surface surface, int width, int height);
+    public static native void nativeSurfaceCreated(Surface surface);
     public static native void nativeSurfaceDestroyed();
     public static native void nativeSetWindowSize(int width, int height);
 }

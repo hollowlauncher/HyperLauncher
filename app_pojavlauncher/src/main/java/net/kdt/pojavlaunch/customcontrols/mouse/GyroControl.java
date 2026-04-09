@@ -12,8 +12,6 @@ import android.view.WindowManager;
 
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
 
-import org.lwjgl.glfw.CallbackBridge;
-
 import java.util.Arrays;
 
 import git.artdeell.dnbootstrap.glfw.GLFW;
@@ -72,7 +70,8 @@ public class GyroControl implements SensorEventListener, GrabListener {
         mWarmup = ROTATION_VECTOR_WARMUP_PERIOD;
         mSensorManager.registerListener(this, mSensor, 1000 * LauncherPreferences.PREF_GYRO_SAMPLE_RATE);
         mCorrectionListener.enable();
-        mShouldHandleEvents = CallbackBridge.isGrabbing();
+        // Avoid going through the JNI each time.
+        mShouldHandleEvents = GLFW.isGrabbing();
         GLFW.addGrabListener(this);
     }
 

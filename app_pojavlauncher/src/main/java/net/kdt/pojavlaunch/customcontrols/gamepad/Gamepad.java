@@ -19,7 +19,7 @@ import net.kdt.pojavlaunch.LwjglGlfwKeycode;
 
 import git.artdeell.dnbootstrap.glfw.GLFW;
 
-import org.lwjgl.glfw.CallbackBridge;
+import net.kdt.pojavlaunch.CallbackBridge;
 
 import static net.kdt.pojavlaunch.Tools.currentDisplayMetrics;
 import static net.kdt.pojavlaunch.customcontrols.gamepad.GamepadJoystick.DIRECTION_EAST;
@@ -34,7 +34,7 @@ import static net.kdt.pojavlaunch.customcontrols.gamepad.GamepadJoystick.DIRECTI
 import static net.kdt.pojavlaunch.customcontrols.gamepad.GamepadJoystick.isJoystickEvent;
 import static net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_DEADZONE_SCALE;
 import static net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_SCALE_FACTOR;
-import static org.lwjgl.glfw.CallbackBridge.sendMouseButton;
+import static net.kdt.pojavlaunch.CallbackBridge.sendMouseButton;
 
 import fr.spse.gamepad_remapper.GamepadHandler;
 import fr.spse.gamepad_remapper.Settings;
@@ -109,7 +109,8 @@ public class Gamepad implements GrabListener, GamepadHandler {
         mMenuMap = mMapProvider.getMenuMap();
         mCurrentMap = mGameMap;
         // Force state refresh
-        boolean currentGrab = CallbackBridge.isGrabbing();
+        // Avoid going through the JNI each time.
+        boolean currentGrab = GLFW.isGrabbing();
         isGrabbing = !currentGrab;
         onGrabState(currentGrab);
     }
@@ -394,7 +395,8 @@ public class Gamepad implements GrabListener, GamepadHandler {
                 break;
 
             default:
-                CallbackBridge.sendKeyPress(LwjglGlfwKeycode.GLFW_KEY_SPACE, CallbackBridge.getCurrentMods(), isKeyEventDown);
+                int modifiers = CallbackBridge.getCurrentMods();
+                GLFW.sendKeyEvent(LwjglGlfwKeycode.GLFW_KEY_SPACE, isKeyEventDown, modifiers);
                 break;
         }
     }

@@ -4,7 +4,7 @@ import android.os.Handler;
 
 import net.kdt.pojavlaunch.LwjglGlfwKeycode;
 
-import org.lwjgl.glfw.CallbackBridge;
+import net.kdt.pojavlaunch.CallbackBridge;
 
 public class RightClickGesture extends DistanceGesture {
     private boolean mGestureEnabled = true;

@@ -7,7 +7,7 @@ import net.kdt.pojavlaunch.LwjglGlfwKeycode;
 import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
 
-import org.lwjgl.glfw.CallbackBridge;
+import net.kdt.pojavlaunch.CallbackBridge;
 
 public class InGUIEventProcessor extends TouchEventProcessor {
     public static final float FINGER_SCROLL_THRESHOLD = Tools.dpToPx(6);

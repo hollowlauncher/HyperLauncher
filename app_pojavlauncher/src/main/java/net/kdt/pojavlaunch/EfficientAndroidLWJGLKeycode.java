@@ -2,8 +2,6 @@ package net.kdt.pojavlaunch;
 
 import android.view.KeyEvent;
 
-import org.lwjgl.glfw.CallbackBridge;
-
 
 public class EfficientAndroidLWJGLKeycode {
 

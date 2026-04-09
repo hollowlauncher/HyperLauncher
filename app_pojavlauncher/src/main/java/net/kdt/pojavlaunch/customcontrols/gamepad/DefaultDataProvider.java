@@ -1,8 +1,6 @@
 package net.kdt.pojavlaunch.customcontrols.gamepad;
 
 
-import org.lwjgl.glfw.CallbackBridge;
-
 import git.artdeell.dnbootstrap.glfw.GLFW;
 import git.artdeell.dnbootstrap.glfw.GrabListener;
 
@@ -25,7 +23,8 @@ public class DefaultDataProvider implements GamepadDataProvider {
 
     @Override
     public boolean isGrabbing() {
-        return CallbackBridge.isGrabbing();
+        // Avoid going through the JNI each time.
+        return GLFW.isGrabbing();
     }
 
     @Override

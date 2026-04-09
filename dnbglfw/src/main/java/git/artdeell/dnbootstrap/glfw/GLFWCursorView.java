@@ -33,8 +33,8 @@ public class GLFWCursorView extends View implements CursorImplementor {
         super(context, attrs, defStyleAttr, defStyleRes);
         GLFW.setCursorImpl(this);
         if(attrs != null) {
-            try(TypedArray arr = context.obtainStyledAttributes(attrs, new int[] {R.styleable.GLFWCursorView_defaultCursorDrawable})) {
-                cursorDrawable = arr.getDrawable(0);
+            try(TypedArray arr = context.obtainStyledAttributes(attrs,R.styleable.GLFWCursorView)) {
+                cursorDrawable = arr.getDrawable(R.styleable.GLFWCursorView_defaultCursorDrawable);
             }
         }
         if(cursorDrawable == null) cursorDrawable = new FallbackCursorDrawable();

@@ -10,9 +10,8 @@ import androidx.annotation.RequiresApi;
 
 import net.kdt.pojavlaunch.MinecraftGLSurface;
 import net.kdt.pojavlaunch.Tools;
-import net.kdt.pojavlaunch.prefs.LauncherPreferences;
 
-import org.lwjgl.glfw.CallbackBridge;
+import net.kdt.pojavlaunch.CallbackBridge;
 
 import git.artdeell.dnbootstrap.glfw.GLFW;
 
@@ -84,7 +83,8 @@ public class AndroidPointerCapture implements ViewTreeObserver.OnWindowFocusChan
             // The relative position will already be written down into the mVector variable.
         }
 
-        if(!CallbackBridge.isGrabbing()) {
+        // Avoid going through the JNI each time.
+        if(!GLFW.isGrabbing()) {
             enableTouchpadIfNecessary();
             // Yes, if the user's touchpad is multi-touch we will also receive events for that.
             // So, handle the scrolling gesture ourselves.

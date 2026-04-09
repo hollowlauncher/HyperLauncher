@@ -1,7 +1,7 @@
 package net.kdt.pojavlaunch.customcontrols.gamepad.direct;
 
-import static org.lwjgl.glfw.CallbackBridge.sGamepadAxisBuffer;
-import static org.lwjgl.glfw.CallbackBridge.sGamepadButtonBuffer;
+import static net.kdt.pojavlaunch.CallbackBridge.sGamepadAxisBuffer;
+import static net.kdt.pojavlaunch.CallbackBridge.sGamepadButtonBuffer;
 
 import android.view.KeyEvent;
 import android.view.MotionEvent;

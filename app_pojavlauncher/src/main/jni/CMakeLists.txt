@@ -14,6 +14,7 @@ add_library(pojavexec SHARED
         jre_launcher/abort_wait.c
         utils.c
         stdio_is.c
+        minibridge.c
         driver_helper/nsbypass.c
 )
 

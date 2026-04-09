@@ -2,15 +2,14 @@ package net.kdt.pojavlaunch;
 
 import static net.kdt.pojavlaunch.MainActivity.touchCharInput;
 import static net.kdt.pojavlaunch.utils.MCOptionUtils.getMcScale;
-import static org.lwjgl.glfw.CallbackBridge.sendMouseButton;
-import static org.lwjgl.glfw.CallbackBridge.windowHeight;
-import static org.lwjgl.glfw.CallbackBridge.windowWidth;
+import static net.kdt.pojavlaunch.CallbackBridge.sendMouseButton;
+import static net.kdt.pojavlaunch.CallbackBridge.windowHeight;
+import static net.kdt.pojavlaunch.CallbackBridge.windowWidth;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
-import android.telecom.Call;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.InputDevice;
@@ -36,8 +35,6 @@ import net.kdt.pojavlaunch.render.SurfaceProvider;
 import net.kdt.pojavlaunch.render.SurfaceViewSurfaceProvider;
 import net.kdt.pojavlaunch.render.TextureViewSurfaceProvider;
 import net.kdt.pojavlaunch.utils.MCOptionUtils;
-
-import org.lwjgl.glfw.CallbackBridge;
 
 import fr.spse.gamepad_remapper.GamepadHandler;
 import fr.spse.gamepad_remapper.RemapperManager;
@@ -137,7 +134,8 @@ public class MinecraftGLSurface extends View implements GrabListener, DirectGame
             }else if(toolType != MotionEvent.TOOL_TYPE_STYLUS) continue;
 
             // Mouse found
-            if(CallbackBridge.isGrabbing()) return false;
+            // Avoid going through the JNI each time.
+            if(GLFW.isGrabbing()) return false;
             GLFW.cursorX = e.getX(i) / getWidth();
             GLFW.cursorY = e.getY(i) / getHeight();
             GLFW.sendMousePos();
@@ -179,7 +177,8 @@ public class MinecraftGLSurface extends View implements GrabListener, DirectGame
         if(mouseCursorIndex == -1) return false; // we cant consoom that, theres no mice!
 
         // Make sure we grabbed the mouse if necessary
-        updateGrabState(CallbackBridge.isGrabbing());
+        // Avoid going through the JNI each time.
+        updateGrabState(GLFW.isGrabbing());
 
         switch(event.getActionMasked()) {
             case MotionEvent.ACTION_HOVER_MOVE:
@@ -297,8 +296,6 @@ public class MinecraftGLSurface extends View implements GrabListener, DirectGame
             return;
         }
         GLFW.nativeSetWindowSize(windowWidth, windowHeight);
-        //CallbackBridge.sendUpdateWindowSize(windowWidth, windowHeight);
-        //JREUtils.applyWindowSize();
     }
 
     private void realStart(){
@@ -357,7 +354,7 @@ public class MinecraftGLSurface extends View implements GrabListener, DirectGame
 
     @Override
     public void onSurfaceAvailable(Surface surface) {
-        GLFW.nativeSurfaceCreated(surface, windowWidth, windowHeight);
+        GLFW.nativeSurfaceCreated(surface);
         if(mRefreshOnly) return;
         realStart();
         mRefreshOnly = true;

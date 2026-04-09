@@ -7,6 +7,7 @@ import android.content.Context;
 import android.text.Editable;
 import android.text.Selection;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.inputmethod.InputMethodManager;
 
@@ -151,7 +152,9 @@ public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText 
                     mCharacterSender.sendBackspace();
                 }
 
-                mCharacterSender.sendChars(text.subSequence(start, lengthAfter));
+
+
+                mCharacterSender.sendChars(text.subSequence(start, start + lengthAfter));
             }
         }
 

@@ -1,6 +1,6 @@
 package net.kdt.pojavlaunch.customcontrols.mouse;
 
-import static org.lwjgl.glfw.CallbackBridge.sendMouseButton;
+import static net.kdt.pojavlaunch.CallbackBridge.sendMouseButton;
 
 import android.os.Handler;
 

@@ -9,8 +9,6 @@ import static net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_VIRTUAL_MOUSE_S
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -18,7 +16,6 @@ import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -32,7 +29,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
@@ -65,18 +61,16 @@ import net.kdt.pojavlaunch.authenticator.accounts.MinecraftAccount;
 import net.kdt.pojavlaunch.utils.RendererCompatUtil;
 import net.kdt.pojavlaunch.utils.jre.GameRunner;
 
-import org.lwjgl.glfw.CallbackBridge;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
+import git.artdeell.dnbootstrap.glfw.AndroidClipboardProvider;
 import git.artdeell.dnbootstrap.glfw.GLFW;
 import git.artdeell.dnbootstrap.glfw.GLFWCursorView;
 import git.artdeell.mojo.R;
 
 public class MainActivity extends BaseActivity implements ControlButtonMenuListener, EditorExitable, ServiceConnection {
-    public static volatile ClipboardManager GLOBAL_CLIPBOARD;
     public static final String INTENT_MINECRAFT_VERSION = "intent_version";
 
     public static TouchCharInput touchCharInput;
@@ -90,6 +84,7 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
     private GyroControl mGyroControl = null;
     private ControlLayout mControlLayout;
     private HotbarView mHotbarView;
+    private volatile AndroidClipboardProvider mClipboardProvider;
 
     Instance instance;
     MinecraftAccount minecraftAccount;
@@ -170,8 +165,10 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
             if(!latestLogFile.exists() && !latestLogFile.createNewFile())
                 throw new IOException("Failed to create a new log file");
             Logger.begin(latestLogFile.getAbsolutePath());
-            // FIXME: is it safe for multi thread?
-            GLOBAL_CLIPBOARD = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+
+            mClipboardProvider = new AndroidClipboardProvider(getApplicationContext());
+            GLFW.setClipboardImpl(mClipboardProvider);
+
             touchCharInput.setCharacterSender(new LwjglCharSender());
 
             String version = getIntent().getStringExtra(INTENT_MINECRAFT_VERSION);
@@ -263,7 +260,8 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
     protected void onPause() {
         ContextExecutor.clearActivity();
         mGyroControl.disable();
-        if (CallbackBridge.isGrabbing()){
+        // Avoid going through the JNI each time.
+        if (GLFW.isGrabbing()){
             CallbackBridge.sendKeyPress(LwjglGlfwKeycode.GLFW_KEY_ESCAPE);
         }
         if(mQuickSettingSideDialog != null) {
@@ -395,7 +393,8 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
     }
 
     public static void toggleMouse(Context ctx) {
-        if (CallbackBridge.isGrabbing()) return;
+        // Avoid going through the JNI each time.
+        if (GLFW.isGrabbing()) return;
         GLFWCursorView cursorView = Tools.getWeakReference(weakCursor);
         if(cursorView == null) return;
         int toastString = 0;
@@ -436,71 +435,6 @@ public class MainActivity extends BaseActivity implements ControlButtonMenuListe
 
     public static void switchKeyboardState() {
         if(touchCharInput != null) touchCharInput.switchKeyboardState();
-    }
-
-    @Keep
-    public static void openLink(String link) {
-        ContextExecutor.executeActivity(ctx->{
-            try {
-                if(link.startsWith("file:")) {
-                    int truncLength = 5;
-                    if(link.startsWith("file://")) truncLength = 7;
-                    String path = link.substring(truncLength);
-                    Tools.openPath(ctx, new File(path), false);
-                }else {
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.parse(link), "*/*");
-                    ctx.startActivity(intent);
-                }
-            } catch (Throwable th) {
-                Tools.showError(ctx, th);
-            }
-        });
-    }
-
-    @SuppressWarnings("unused") //TODO: actually use it
-    public static void openPath(String path) {
-        ContextExecutor.executeActivity(ctx->{
-            try {
-                Tools.openPath(ctx, new File(path), false);
-            } catch (Throwable th) {
-                Tools.showError(ctx, th);
-            }
-        });
-    }
-
-    @Keep
-    public static void querySystemClipboard() {
-        Tools.runOnUiThread(()->{
-            ClipData clipData = GLOBAL_CLIPBOARD.getPrimaryClip();
-            if(clipData == null) {
-                AWTInputBridge.nativeClipboardReceived(null, null);
-                return;
-            }
-            ClipData.Item firstClipItem = clipData.getItemAt(0);
-            //TODO: coerce to HTML if the clip item is styled
-            CharSequence clipItemText = firstClipItem.getText();
-            if(clipItemText == null) {
-                AWTInputBridge.nativeClipboardReceived(null, null);
-                return;
-            }
-            AWTInputBridge.nativeClipboardReceived(clipItemText.toString(), "plain");
-        });
-    }
-
-    @Keep
-    public static void putClipboardData(String data, String mimeType) {
-        Tools.runOnUiThread(()-> {
-            ClipData clipData = null;
-            switch(mimeType) {
-                case "text/plain":
-                    clipData = ClipData.newPlainText("AWT Paste", data);
-                    break;
-                case "text/html":
-                    clipData = ClipData.newHtmlText("AWT Paste", data, data);
-            }
-            if(clipData != null) GLOBAL_CLIPBOARD.setPrimaryClip(clipData);
-        });
     }
 
     @Override

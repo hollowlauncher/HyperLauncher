@@ -1,7 +1,7 @@
-package org.lwjgl.glfw;
+package net.kdt.pojavlaunch;
 
-import android.content.ClipData;
-import android.content.ClipDescription;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.view.Choreographer;
 import android.view.KeyEvent;
@@ -9,11 +9,10 @@ import android.view.KeyEvent;
 import androidx.annotation.Keep;
 import androidx.annotation.Nullable;
 
-import net.kdt.pojavlaunch.LwjglGlfwKeycode;
-import net.kdt.pojavlaunch.MainActivity;
-import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.customcontrols.gamepad.direct.DirectGamepadEnableHandler;
+import net.kdt.pojavlaunch.lifecycle.ContextExecutor;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -25,10 +24,6 @@ public class CallbackBridge {
     public static final Choreographer sChoreographer = Choreographer.getInstance();
     // Use a weak reference here to avoid possibly statically referencing a Context.
     private static @Nullable WeakReference<DirectGamepadEnableHandler> sDirectGamepadEnableHandler;
-
-    public static final int CLIPBOARD_COPY = 2000;
-    public static final int CLIPBOARD_PASTE = 2001;
-    public static final int CLIPBOARD_OPEN = 2002;
 
     public static volatile int windowWidth, windowHeight;
     public volatile static boolean holdingAlt, holdingCapslock, holdingCtrl,
@@ -48,10 +43,6 @@ public class CallbackBridge {
         }, 33);
     }
 
-    public static void sendKeyPress(int keyCode, int modifiers, boolean status) {
-        GLFW.sendKeyEvent(keyCode, status, modifiers);
-    }
-
 
     public static void sendKeyPress(int keyCode) {
         GLFW.sendKeyEvent(keyCode, true, getCurrentMods());
@@ -69,35 +60,6 @@ public class CallbackBridge {
     public static void sendScroll(double xoffset, double yoffset) {
         GLFW.sendScrollEvent(xoffset, yoffset);
     }
-
-    public static boolean isGrabbing() {
-        // Avoid going through the JNI each time.
-        return GLFW.isGrabbing();
-    }
-
-    // Called from JRE side
-    @SuppressWarnings("unused")
-    @Keep
-    public static @Nullable String accessAndroidClipboard(int type, String copy) {
-        switch (type) {
-            case CLIPBOARD_COPY:
-                MainActivity.GLOBAL_CLIPBOARD.setPrimaryClip(ClipData.newPlainText("Copy", copy));
-                return null;
-
-            case CLIPBOARD_PASTE:
-                if (MainActivity.GLOBAL_CLIPBOARD.hasPrimaryClip() && MainActivity.GLOBAL_CLIPBOARD.getPrimaryClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
-                    return MainActivity.GLOBAL_CLIPBOARD.getPrimaryClip().getItemAt(0).getText().toString();
-                } else {
-                    return "";
-                }
-
-            case CLIPBOARD_OPEN:
-                MainActivity.openLink(copy);
-                return null;
-            default: return null;
-        }
-    }
-
 
     public static int getCurrentMods() {
         int currMods = 0;
@@ -147,6 +109,37 @@ public class CallbackBridge {
     }
 
     @Keep
+    public static void openLink(String link) {
+        ContextExecutor.executeActivity(ctx->{
+            try {
+                if(link.startsWith("file:")) {
+                    int truncLength = 5;
+                    if(link.startsWith("file://")) truncLength = 7;
+                    String path = link.substring(truncLength);
+                    Tools.openPath(ctx, new File(path), false);
+                }else {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.parse(link), "*/*");
+                    ctx.startActivity(intent);
+                }
+            } catch (Throwable th) {
+                Tools.showError(ctx, th);
+            }
+        });
+    }
+
+    @SuppressWarnings("unused") //TODO: actually use it
+    public static void openPath(String path) {
+        ContextExecutor.executeActivity(ctx->{
+            try {
+                Tools.openPath(ctx, new File(path), false);
+            } catch (Throwable th) {
+                Tools.showError(ctx, th);
+            }
+        });
+    }
+
+    @Keep
     private static void onDirectInputEnable() {
         Log.i("CallbackBridge", "onDirectInputEnable()");
         DirectGamepadEnableHandler enableHandler = Tools.getWeakReference(sDirectGamepadEnableHandler);
@@ -164,8 +157,11 @@ public class CallbackBridge {
         sDirectGamepadEnableHandler = new WeakReference<>(h);
     }
 
+    public static native void minibridgeInit();
+
     static {
         System.loadLibrary("pojavexec");
+        minibridgeInit();
         sGamepadButtonBuffer = ByteBuffer.allocate(50); // TODO
         sGamepadAxisBuffer = createGamepadAxisBuffer();
     }

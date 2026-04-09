@@ -2,13 +2,10 @@ package net.kdt.pojavlaunch.customcontrols.mouse;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
-
-import org.lwjgl.glfw.CallbackBridge;
 
 public class InGameEventProcessor extends TouchEventProcessor {
     private final Handler mGestureHandler = new Handler(Looper.getMainLooper());

@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <linux/futex.h>
+#include "../jvm_hooks/jvm_hooks.h"
 #include "utils.h"
 #include "load_stages.h"
 #include "elf_hinter.h"
@@ -198,13 +199,18 @@ extern bool installClassLoaderHooks(JNIEnv *env, JNIEnv* vm_env);
 JNIEXPORT jboolean JNICALL
 Java_net_kdt_pojavlaunch_utils_jre_JavaRunner_nativeLoadJVM(JNIEnv *env, jclass clazz, jstring vmpath, jobjectArray java_args, jstring mainClass, jobjectArray appArgs, jboolean hasJavaAgents) {
     java_vm_t java_vm;
-    //setup_abort_wait();
-    //prepareSignalHandlers();
+    setup_abort_wait();
+    prepareSignalHandlers();
     if(!initializeJavaVM(&java_vm, env, vmpath, java_args, hasJavaAgents)) return JNI_FALSE;
     JNIEnv *vm_env = java_vm.vm_env;
     if(apiRequiresHints()) {
         if(!installClassLoaderHooks(env, vm_env)) return JNI_FALSE;
     }
+
+    // Since the classpath is specified in the VM args, we already have it in our JNIEnv and c=an insert the hooks fairly early.
+    hookExec(vm_env);
+    installLwjglDlopenHook(vm_env);
+    installEMUIIteratorMititgation(vm_env);
 
     jint numAppArgs = (*env)->GetArrayLength(env, appArgs);
     const char** appArgsChar = convert_to_char_array(env, appArgs);
