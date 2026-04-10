@@ -216,6 +216,10 @@ public class GameRunner {
             javaArgList.add("-Djna.boot.library.path="+dirPath);
         }
 
+        File lwjglExtractDir = new File(Tools.DIR_CACHE, "lwjgl_native/"+versionId);
+        FileUtils.ensureDirectory(lwjglExtractDir);
+        javaArgList.add("-Dorg.lwjgl.system.SharedLibraryExtractPath="+lwjglExtractDir.getAbsolutePath());
+
         addAuthlibInjectorArgs(javaArgList, minecraftAccount);
 
         javaArgList.addAll(getMinecraftJVMArgs(versionId));
