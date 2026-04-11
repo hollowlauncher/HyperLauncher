@@ -13,9 +13,7 @@
 #define TAG __FILE_NAME__
 #include <log.h>
 
-void* maybe_load_vulkan() {
-    abort(); // TODO
-}
+extern void* pojavexec_loadVulkanDriver();
 
 /**
  * Basically a verbatim implementation of ndlopen(), found at
@@ -31,7 +29,7 @@ static jlong ndlopen_bugfix(__attribute__((unused)) JNIEnv *env,
     // Oveeride vulkan loading to let us load vulkan ourselves
     if(strstr(filename, "libvulkan.so") == filename) {
         printf("LWJGL linkerhook: replacing load for libvulkan.so with custom driver\n");
-        return (jlong) maybe_load_vulkan();
+        return (jlong) pojavexec_loadVulkanDriver();
     }
 
     // This hook also serves the task of mitigating a bug: the idea is that since, on Android 10 and

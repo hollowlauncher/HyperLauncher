@@ -110,6 +110,7 @@ public class JavaRunner {
                 "-Duser.timezone=" + TimeZone.getDefault().getID(),
 
                 "-Dorg.lwjgl.vulkan.libname=libvulkan.so",
+                "-Dorg.lwjgl.spvc.libname=spirv-cross-c-shared",
                 //LWJGL 3 DEBUG FLAGS
                 //"-Dorg.lwjgl.util.Debug=true",
                 //"-Dorg.lwjgl.util.DebugFunctions=true",
