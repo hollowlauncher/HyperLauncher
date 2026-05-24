@@ -1,8 +1,12 @@
 package net.kdt.pojavlaunch.fragments;
 
+import static net.kdt.pojavlaunch.Tools.runOnUiThread;
+
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,6 +15,8 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -19,13 +25,28 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.kdt.mcgui.ProgressLayout;
+
 import git.artdeell.mojo.R;
+
+import net.kdt.pojavlaunch.PojavApplication;
+import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.modloaders.modpacks.ModItemAdapter;
 import net.kdt.pojavlaunch.modloaders.modpacks.api.CommonApi;
 import net.kdt.pojavlaunch.modloaders.modpacks.api.ModpackApi;
 import net.kdt.pojavlaunch.modloaders.modpacks.models.SearchFilters;
 import net.kdt.pojavlaunch.profiles.VersionSelectorDialog;
 import net.kdt.pojavlaunch.progresskeeper.ProgressKeeper;
+import net.kdt.pojavlaunch.progresskeeper.TaskCountListener;
+
+import org.apache.commons.io.IOUtils;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 
 public class SearchModFragment extends Fragment implements ModItemAdapter.SearchResultCallback {
 
@@ -47,10 +68,47 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
     private ProgressBar mSearchProgressBar;
     private TextView mStatusTextView;
     private ColorStateList mDefaultTextColor;
-
     private ModpackApi modpackApi;
 
     private final SearchFilters mSearchFilters;
+
+    private Button mImportButton;
+    private TaskCountListener mTaskCountListener;
+
+    ActivityResultLauncher<String> mImportLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(),
+            uri -> {
+                if (uri == null) return;
+                Context context = getContext();
+                ContentResolver contentResolver = getContext().getContentResolver();
+                PojavApplication.sExecutorService.execute(() -> {
+                    performLocalInstall(uri, context, contentResolver);
+                });
+            });
+
+    public void performLocalInstall(Uri uri, Context context, ContentResolver contentResolver) {
+            String fileName = Tools.getFileName(context, uri);
+            if (fileName == null) return;
+            File outFile = new File(Tools.DIR_CACHE, fileName + ".cf");
+            ProgressLayout.setProgress(ProgressLayout.INSTALL_MODPACK, R.string.multirt_progress_caching);
+            try (InputStream inputStream = contentResolver.openInputStream(uri);
+                 OutputStream outputStream = new FileOutputStream(outFile)) {
+                if (inputStream == null) return;
+                IOUtils.copy(inputStream, outputStream);
+                outputStream.flush();
+            } catch (IOException e) {
+                Tools.showErrorRemote("Error", e);
+                ProgressLayout.clearProgress(ProgressLayout.INSTALL_MODPACK);
+                return;
+            }
+            try {
+                modpackApi.installLocalModpack(fileName, outFile, null);
+            } catch (IOException e) {
+                Tools.showErrorRemote("Error", e);
+            } finally {
+                outFile.delete();
+                ProgressLayout.clearProgress(ProgressLayout.INSTALL_MODPACK);
+            }
+    }
 
     public SearchModFragment(){
         super(R.layout.fragment_mod_search);
@@ -99,6 +157,15 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
                    mRecyclerview.getPaddingBottom());
         });
         mFilterButton.setOnClickListener(v -> displayFilterDialog());
+        mImportButton = view.findViewById(R.id.mineButton_import_local_modpack);
+        mImportButton.setOnClickListener(v -> {
+            mImportLauncher.launch("*/*");
+        });
+        mTaskCountListener = taskCount -> {
+            runOnUiThread(() -> mImportButton.setEnabled(taskCount == 0));
+            return false;
+        };
+        ProgressKeeper.addTaskCountListener(mTaskCountListener);
 
         searchMods(null);
     }
@@ -108,6 +175,7 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
         super.onDestroyView();
         ProgressKeeper.removeTaskCountListener(mModItemAdapter);
         mRecyclerview.removeOnScrollListener(mOverlayPositionListener);
+        if (mTaskCountListener != null) { ProgressKeeper.removeTaskCountListener(mTaskCountListener); }
     }
 
     @Override
@@ -166,7 +234,6 @@ public class SearchModFragment extends Fragment implements ModItemAdapter.Search
                 dialogInterface.dismiss();
             });
         });
-
 
         dialog.show();
     }

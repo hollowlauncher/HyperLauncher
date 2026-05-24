@@ -397,6 +397,7 @@
     <string name="modloader_dl_install_forge_instance">Установка с Forge</string>
     <string name="social_media_invite" translatable="false">https://t.me/mojolauncher</string>
     <string name="compat_version_not_supported">Ваше устройство не может запустить эту версию поскольку LTW не поддерживается</string>
+    <string name="compat_sodium_not_supported">Ваше устройство не может запустить Sodium на этой версии поскольку LTW не поддерживается</string>
     <string name="oauth_unknown_error">Неизвестная ошибка авторизации</string>
     <string name="oauth_web_complete">Авторизация…</string>
     <string name="auth_select_microsoft">Аккаунт Microsoft</string>
@@ -430,6 +431,10 @@
     <string name="gr_err_renderer_load_Failed">Ошибка загрузки визуализатора</string>
     <string name="ltw_4x_msaa_warning_msg">Похоже, вы включили настройку \"Включить 4x MSAA\" в разделе \"Для разработчиков\". Пожалуйста отключите её чтобы избежать проблем с визуализацией.</string>
     <string name="no_instance">Не выбрано установки. Пожалуйста создайте установку или выберите существующую.</string>
+    <string name="modloader_dl_install_legacy_fabric_instance">Установка с Legacy Fabric</string>
+    <string name="instance_delete">Удалить установку</string>
+    <string name="instance_delete_confirmation">Вы уверены что хотите удалить установку? Ваши миры, моды, ресурсы и иные данные находящиеся в папке установки будут удалены. Данное действие не может быть отменено!</string>
+    <string name="import_local_modpack">Импорт локальной сборки</string>
     <string name="preference_microphone_access_title">Запросить доступ к микрофону</string>
     <string name="preference_microphone_access_description">Запрашивает у системы доступ к микрофону устройства в игре</string>
 </resources>
