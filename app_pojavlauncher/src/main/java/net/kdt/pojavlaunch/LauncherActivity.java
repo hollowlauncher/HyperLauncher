@@ -276,13 +276,7 @@ public class LauncherActivity extends BaseActivity {
             this.checkForPermission(33, Manifest.permission.POST_NOTIFICATIONS)) {
             return;
         }
-        if(ActivityCompat.shouldShowRequestPermissionRationale(
-                this,
-                Manifest.permission.POST_NOTIFICATIONS)) {
-            showNotificationPermissionReasoning();
-            return;
-        }
-        askForPermission(33, Manifest.permission.POST_NOTIFICATIONS);
+        showNotificationPermissionReasoning();
     }
 
     private void showNotificationPermissionReasoning() {
