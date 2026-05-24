@@ -265,8 +265,10 @@ public class LauncherActivity extends BaseActivity {
     }
     public boolean checkForPermission(int minApi, final String permission) {
         return Build.VERSION.SDK_INT < minApi ||
-                ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_DENIED ||
-                ActivityCompat.shouldShowRequestPermissionRationale(this, permission);
+                ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_DENIED;
+    }
+    public boolean checkForPermissionRationale(int minApi, final String permission) {
+        return checkForPermission(minApi, permission) || ActivityCompat.shouldShowRequestPermissionRationale(this, permission);
     }
 
     private void checkNotificationPermission() {

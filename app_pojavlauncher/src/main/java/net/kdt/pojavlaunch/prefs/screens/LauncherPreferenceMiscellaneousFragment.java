@@ -26,7 +26,7 @@ public class LauncherPreferenceMiscellaneousFragment extends LauncherPreferenceF
     }
 
     private void updateVisibility(){
-        requirePreference("microphoneAccessRequest").setVisible(!getLauncherActivity().checkForPermission(33, Manifest.permission.RECORD_AUDIO));
+        requirePreference("microphoneAccessRequest").setVisible(!getLauncherActivity().checkForPermissionRationale(33, Manifest.permission.RECORD_AUDIO));
     }
 
     @Override
