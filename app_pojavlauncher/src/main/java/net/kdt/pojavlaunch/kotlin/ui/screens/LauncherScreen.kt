@@ -1045,12 +1045,11 @@ fun CrynoixLoadingOverlay() {
             Icon(
                 painter = painterResource(id = R.drawable.icon_hyper),
                 contentDescription = null,
-                modifier = Modifier.size(100.dp),
-                tint = Color(0xFF00FFFF)
+                modifier = Modifier.size(100.dp)
             )
             Spacer(modifier = Modifier.height(24.dp))
             CircularProgressIndicator(
-                color = Color(0xFF00FFFF),
+                color = Color(0xFF0074FF),
                 strokeWidth = 4.dp
             )
             Spacer(modifier = Modifier.height(16.dp))

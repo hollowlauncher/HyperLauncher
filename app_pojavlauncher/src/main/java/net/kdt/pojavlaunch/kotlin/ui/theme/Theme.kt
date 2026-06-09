@@ -92,7 +92,7 @@ fun PojavTheme(
     val colorScheme = when {
         isThemeTypeEnabled -> {
             if (themeTypeMode == "crynoix") {
-                val cyan = Color(0xFF00FFFF)
+                val cyan = Color(0xFF146AFF)
                 darkColorScheme(
                     primary = cyan,
                     onPrimary = Color.White,
