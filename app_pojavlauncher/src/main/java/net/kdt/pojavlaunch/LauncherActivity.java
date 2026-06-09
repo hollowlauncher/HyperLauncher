@@ -38,7 +38,7 @@ import net.kdt.pojavlaunch.tasks.AsyncMinecraftDownloader;
 import net.kdt.pojavlaunch.tasks.AsyncVersionList;
 import net.kdt.pojavlaunch.tasks.MinecraftDownloader;
 import net.kdt.pojavlaunch.utils.NotificationUtils;
-import net.kdt.pojavlaunch.kotlin.ui.screens.LauncherScreenHost;
+import net.kdt.pojavlaunch.kotlin.ui.host.LauncherScreenHost;
 
 import net.ashmeet.hyperlauncher.R;
 

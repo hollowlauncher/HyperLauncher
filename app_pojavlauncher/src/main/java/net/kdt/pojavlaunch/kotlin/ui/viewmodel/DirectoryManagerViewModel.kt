@@ -1,9 +1,11 @@
-package net.kdt.pojavlaunch.ui.screens
+package net.kdt.pojavlaunch.kotlin.ui.viewmodel
 
 import android.content.Context
 import android.net.Uri
 import android.widget.Toast
-import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -11,12 +13,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.kdt.pojavlaunch.Tools
 import net.kdt.pojavlaunch.instances.Instances
-import net.kdt.pojavlaunch.utils.FileUtils.ensureParentDirectory
+import net.kdt.pojavlaunch.utils.FileUtils
 import org.apache.commons.io.IOUtils
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 import java.util.regex.Pattern
+import kotlin.collections.addAll
 
 class DirectoryManagerViewModel : ViewModel() {
     var rootDir by mutableStateOf<File?>(null)
@@ -160,7 +162,7 @@ class DirectoryManagerViewModel : ViewModel() {
                 var target = File(targetDir, name)
                 target = resolveUnique(target)
 
-                ensureParentDirectory(target)
+                FileUtils.ensureParentDirectory(target)
                 context.contentResolver.openInputStream(uri)?.use { input ->
                     FileOutputStream(target).use { output ->
                         IOUtils.copy(input, output)

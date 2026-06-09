@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.compose.ui.platform.ComposeView;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import net.kdt.pojavlaunch.ui.screens.LoggerViewBinder;
+import net.kdt.pojavlaunch.kotlin.ui.binder.LoggerViewBinder;
 
 /**
  * A class able to display logs to the user.

@@ -1,4 +1,4 @@
-package net.kdt.pojavlaunch.ui.screens
+package net.kdt.pojavlaunch.kotlin.ui.viewmodel
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -6,31 +6,38 @@ import android.graphics.BitmapFactory
 import android.util.Log
 import android.util.LruCache
 import android.widget.Toast
-import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.kdt.mcgui.ProgressLayout
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
-import net.ashmeet.hyperlauncher.R
-import net.kdt.pojavlaunch.PojavApplication
+import kotlinx.coroutines.withContext
 import net.kdt.pojavlaunch.Tools
 import net.kdt.pojavlaunch.instances.Instances
 import net.kdt.pojavlaunch.modloaders.modpacks.api.ApiHandler
 import net.kdt.pojavlaunch.modrinth.ModrinthProject
 import net.kdt.pojavlaunch.modrinth.ModrinthVersion
-import net.kdt.pojavlaunch.progresskeeper.ProgressKeeper.submitProgress
+import net.kdt.pojavlaunch.progresskeeper.ProgressKeeper
 import net.kdt.pojavlaunch.services.ProgressService
-import net.kdt.pojavlaunch.utils.DownloadUtils.downloadFile
-import net.kdt.pojavlaunch.utils.FileUtils.ensureDirectorySilently
+import net.kdt.pojavlaunch.ui.screens.ContentInstallerType
+import net.kdt.pojavlaunch.utils.DownloadUtils
+import net.kdt.pojavlaunch.utils.FileUtils
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.net.URL
-import java.util.*
+import java.util.ArrayList
+import java.util.HashMap
+import java.util.Locale
 import java.util.concurrent.atomic.AtomicInteger
 
 class ContentInstallerViewModel : ViewModel() {
@@ -104,7 +111,7 @@ class ContentInstallerViewModel : ViewModel() {
         val token = mSearchToken.incrementAndGet()
         isLoading = true
         statusText = "Searching..."
-        submitProgress(ProgressLayout.CONTENT_INSTALL, 0, 0, statusText)
+        ProgressKeeper.submitProgress(ProgressLayout.CONTENT_INSTALL, 0, 0, statusText)
 
         mSearchJob = viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -114,12 +121,22 @@ class ContentInstallerViewModel : ViewModel() {
                     if (token != mSearchToken.get()) return@withContext
                     projects = results
                     isLoading = false
-                    statusText = if (results.isEmpty()) "No results" else "Found ${results.size} projects"
-                    submitProgress(ProgressLayout.CONTENT_INSTALL, 100, 0, statusText)
+                    statusText =
+                        if (results.isEmpty()) "No results" else "Found ${results.size} projects"
+                    ProgressKeeper.submitProgress(
+                        ProgressLayout.CONTENT_INSTALL,
+                        100,
+                        0,
+                        statusText
+                    )
 
                     launch {
                         delay(2000)
-                        if (token == mSearchToken.get()) submitProgress(ProgressLayout.CONTENT_INSTALL, -1, -1)
+                        if (token == mSearchToken.get()) ProgressKeeper.submitProgress(
+                            ProgressLayout.CONTENT_INSTALL,
+                            -1,
+                            -1
+                        )
                     }
                 }
             } catch (e: Exception) {
@@ -128,10 +145,15 @@ class ContentInstallerViewModel : ViewModel() {
                     if (token != mSearchToken.get()) return@withContext
                     isLoading = false
                     statusText = "Failed to load"
-                    submitProgress(ProgressLayout.CONTENT_INSTALL, 100, 0, statusText)
+                    ProgressKeeper.submitProgress(
+                        ProgressLayout.CONTENT_INSTALL,
+                        100,
+                        0,
+                        statusText
+                    )
                     launch {
                         delay(2000)
-                        submitProgress(ProgressLayout.CONTENT_INSTALL, -1, -1)
+                        ProgressKeeper.submitProgress(ProgressLayout.CONTENT_INSTALL, -1, -1)
                     }
                 }
             }
@@ -159,7 +181,8 @@ class ContentInstallerViewModel : ViewModel() {
     private suspend fun getIcon(url: String): Bitmap? = withContext(Dispatchers.IO) {
         mIconMemoryCache.get(url)?.let { return@withContext it }
 
-        val cacheFile = File(Tools.DIR_CACHE, "modrinth_icons/" + url.hashCode().toString() + ".png")
+        val cacheFile =
+            File(Tools.DIR_CACHE, "modrinth_icons/" + url.hashCode().toString() + ".png")
         if (cacheFile.exists()) {
             try {
                 val bitmap = BitmapFactory.decodeFile(cacheFile.absolutePath)
@@ -183,7 +206,7 @@ class ContentInstallerViewModel : ViewModel() {
                 if (bitmap != null) {
                     mIconMemoryCache.put(url, bitmap)
 
-                    ensureDirectorySilently(cacheFile.parentFile)
+                    FileUtils.ensureDirectorySilently(cacheFile.parentFile)
                     try {
                         FileOutputStream(cacheFile).use {
                             bitmap.compress(Bitmap.CompressFormat.PNG, 90, it)
@@ -241,7 +264,7 @@ class ContentInstallerViewModel : ViewModel() {
         selectedProjectMCVersion = null
         isLoading = true
         statusText = "Loading versions..."
-        submitProgress(ProgressLayout.CONTENT_INSTALL, 0, 0, statusText)
+        ProgressKeeper.submitProgress(ProgressLayout.CONTENT_INSTALL, 0, 0, statusText)
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -252,13 +275,24 @@ class ContentInstallerViewModel : ViewModel() {
                     if (token != mSearchToken.get()) return@withContext
                     isLoading = false
                     projectVersions = versions
-                    availableProjectMCVersions = versions.flatMap { it.gameVersions }.distinct().sortedDescending()
+                    availableProjectMCVersions =
+                        versions.flatMap { it.gameVersions }.distinct().sortedDescending()
 
-                    statusText = if (versions.isEmpty()) "No downloadable versions found" else "Found ${versions.size} versions"
-                    submitProgress(ProgressLayout.CONTENT_INSTALL, 100, 0, statusText)
+                    statusText =
+                        if (versions.isEmpty()) "No downloadable versions found" else "Found ${versions.size} versions"
+                    ProgressKeeper.submitProgress(
+                        ProgressLayout.CONTENT_INSTALL,
+                        100,
+                        0,
+                        statusText
+                    )
                     launch {
                         delay(2000)
-                        if (token == mSearchToken.get()) submitProgress(ProgressLayout.CONTENT_INSTALL, -1, -1)
+                        if (token == mSearchToken.get()) ProgressKeeper.submitProgress(
+                            ProgressLayout.CONTENT_INSTALL,
+                            -1,
+                            -1
+                        )
                     }
                 }
 
@@ -270,10 +304,15 @@ class ContentInstallerViewModel : ViewModel() {
                     if (token != mSearchToken.get()) return@withContext
                     isLoading = false
                     statusText = "Failed to load versions"
-                    submitProgress(ProgressLayout.CONTENT_INSTALL, 100, 0, statusText)
+                    ProgressKeeper.submitProgress(
+                        ProgressLayout.CONTENT_INSTALL,
+                        100,
+                        0,
+                        statusText
+                    )
                     launch {
                         delay(2000)
-                        submitProgress(ProgressLayout.CONTENT_INSTALL, -1, -1)
+                        ProgressKeeper.submitProgress(ProgressLayout.CONTENT_INSTALL, -1, -1)
                     }
                 }
             }
@@ -322,23 +361,38 @@ class ContentInstallerViewModel : ViewModel() {
 
         Toast.makeText(context, "Downloading in background...", Toast.LENGTH_SHORT).show()
         ProgressService.startService(context)
-        submitProgress(ProgressLayout.CONTENT_INSTALL, 0, 0, "Downloading: ${target.name}")
+        ProgressKeeper.submitProgress(
+            ProgressLayout.CONTENT_INSTALL,
+            0,
+            0,
+            "Downloading: ${target.name}"
+        )
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                downloadFile(version.url, target)
+                DownloadUtils.downloadFile(version.url, target)
                 withContext(Dispatchers.Main) {
-                    submitProgress(ProgressLayout.CONTENT_INSTALL, 100, 0, "Downloaded: ${target.name}")
+                    ProgressKeeper.submitProgress(
+                        ProgressLayout.CONTENT_INSTALL,
+                        100,
+                        0,
+                        "Downloaded: ${target.name}"
+                    )
                     Toast.makeText(context, "Saved: ${target.name}", Toast.LENGTH_LONG).show()
                     delay(3000)
-                    submitProgress(ProgressLayout.CONTENT_INSTALL, -1, -1)
+                    ProgressKeeper.submitProgress(ProgressLayout.CONTENT_INSTALL, -1, -1)
                 }
             } catch (e: IOException) {
                 withContext(Dispatchers.Main) {
-                    submitProgress(ProgressLayout.CONTENT_INSTALL, 100, 0, "Failed: ${target.name}")
+                    ProgressKeeper.submitProgress(
+                        ProgressLayout.CONTENT_INSTALL,
+                        100,
+                        0,
+                        "Failed: ${target.name}"
+                    )
                     Tools.showError(context, e)
                     delay(3000)
-                    submitProgress(ProgressLayout.CONTENT_INSTALL, -1, -1)
+                    ProgressKeeper.submitProgress(ProgressLayout.CONTENT_INSTALL, -1, -1)
                 }
             }
         }
@@ -357,7 +411,7 @@ class ContentInstallerViewModel : ViewModel() {
         }
 
         val target = File(finalBase, subfolder)
-        ensureDirectorySilently(target)
+        FileUtils.ensureDirectorySilently(target)
         return target
     }
 }

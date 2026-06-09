@@ -60,7 +60,7 @@ import net.kdt.pojavlaunch.utils.MCOptionUtils;
 import net.kdt.pojavlaunch.authenticator.accounts.MinecraftAccount;
 import net.kdt.pojavlaunch.utils.RendererCompatUtil;
 import net.kdt.pojavlaunch.utils.jre.GameRunner;
-import net.kdt.pojavlaunch.kotlin.ui.screens.LauncherScreenHost;
+import net.kdt.pojavlaunch.kotlin.ui.host.LauncherScreenHost;
 
 import java.io.File;
 import java.io.IOException;

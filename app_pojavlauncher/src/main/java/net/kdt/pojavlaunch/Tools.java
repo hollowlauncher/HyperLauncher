@@ -349,7 +349,7 @@ public final class Tools {
         }
 
         Runnable runnable = () -> {
-            @SuppressLint("StringFormatInvalid") final String errMsg = showMore ? printToString(e) : rolledMessage != null ? rolledMessage : e.getMessage();
+            @SuppressLint({"StringFormatInvalid", "LocalSuppress"}) final String errMsg = showMore ? printToString(e) : rolledMessage != null ? rolledMessage : e.getMessage();
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(ctx)
                     .setTitle(titleId)
                     .setMessage(errMsg)

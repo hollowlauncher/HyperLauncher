@@ -1,6 +1,7 @@
-package net.kdt.pojavlaunch.ui.screens
+package net.kdt.pojavlaunch.kotlin.ui.binder
 
 import androidx.compose.ui.platform.ComposeView
+import net.kdt.pojavlaunch.ui.screens.LoggerScreen
 import net.kdt.pojavlaunch.ui.theme.PojavTheme
 
 /**

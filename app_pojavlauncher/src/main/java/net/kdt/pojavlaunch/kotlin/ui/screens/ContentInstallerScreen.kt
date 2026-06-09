@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.BaseActivity
+import net.kdt.pojavlaunch.kotlin.ui.viewmodel.ContentInstallerViewModel
 import net.kdt.pojavlaunch.modrinth.ModrinthProject
 import net.kdt.pojavlaunch.modrinth.ModrinthVersion
 import net.kdt.pojavlaunch.ui.theme.PojavTheme

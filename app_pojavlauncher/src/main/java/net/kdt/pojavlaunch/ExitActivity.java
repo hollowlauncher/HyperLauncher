@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.compose.ui.platform.ComposeView;
 
 import net.ashmeet.hyperlauncher.R;
-import net.kdt.pojavlaunch.ui.screens.ExitScreenHost;
+import net.kdt.pojavlaunch.kotlin.ui.host.ExitScreenHost;
 
 import java.io.File;
 import java.io.IOException;

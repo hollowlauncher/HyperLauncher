@@ -1,9 +1,11 @@
-package net.kdt.pojavlaunch.ui.screens
+package net.kdt.pojavlaunch.kotlin.ui.viewmodel
 
 import android.content.Context
 import android.net.Uri
 import android.util.Log
-import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers

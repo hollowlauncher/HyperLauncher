@@ -19,7 +19,7 @@ import net.kdt.pojavlaunch.PojavApplication
 import net.kdt.pojavlaunch.Tools
 import net.kdt.pojavlaunch.modloaders.modpacks.api.CommonApi
 import net.kdt.pojavlaunch.ui.screens.ProfileSelectionScreen
-import net.kdt.pojavlaunch.ui.screens.ProfileSelectionViewModel
+import net.kdt.pojavlaunch.kotlin.ui.viewmodel.ProfileSelectionViewModel
 import net.kdt.pojavlaunch.ui.theme.PojavTheme
 import java.io.File
 import java.io.FileOutputStream

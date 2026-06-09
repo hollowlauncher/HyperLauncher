@@ -21,7 +21,7 @@ import net.kdt.pojavlaunch.customcontrols.ControlLayout;
 import net.kdt.pojavlaunch.customcontrols.EditorExitable;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
 import net.kdt.pojavlaunch.utils.CropperUtils;
-import net.kdt.pojavlaunch.kotlin.ui.screens.LauncherScreenHost;
+import net.kdt.pojavlaunch.kotlin.ui.host.LauncherScreenHost;
 
 import java.io.IOException;
 

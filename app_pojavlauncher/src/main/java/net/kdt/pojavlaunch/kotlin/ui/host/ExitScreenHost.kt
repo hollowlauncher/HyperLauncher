@@ -1,9 +1,10 @@
-package net.kdt.pojavlaunch.ui.screens
+package net.kdt.pojavlaunch.kotlin.ui.host
 
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import net.kdt.pojavlaunch.ExitActivity
 import net.kdt.pojavlaunch.Tools
+import net.kdt.pojavlaunch.ui.screens.ExitScreen
 import net.kdt.pojavlaunch.ui.theme.PojavTheme
 
 object ExitScreenHost {

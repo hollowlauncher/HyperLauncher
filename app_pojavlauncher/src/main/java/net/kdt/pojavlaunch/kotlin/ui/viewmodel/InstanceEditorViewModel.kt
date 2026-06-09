@@ -1,9 +1,12 @@
-package net.kdt.pojavlaunch.ui.screens
+package net.kdt.pojavlaunch.kotlin.ui.viewmodel
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import net.ashmeet.hyperlauncher.R
 import net.kdt.pojavlaunch.Tools
@@ -14,6 +17,7 @@ import net.kdt.pojavlaunch.multirt.MultiRTUtils
 import net.kdt.pojavlaunch.multirt.Runtime
 import net.kdt.pojavlaunch.utils.RendererCompatUtil
 import java.io.IOException
+import kotlin.text.ifEmpty
 
 class InstanceEditorViewModel : ViewModel() {
     enum class FileSelectionMode {
@@ -59,7 +63,8 @@ class InstanceEditorViewModel : ViewModel() {
 
         val compatibleRenderers = RendererCompatUtil.getCompatibleRenderers(context)
         rendererIds = compatibleRenderers.rendererIds
-        rendererDisplayNames = compatibleRenderers.rendererDisplayNames.toList() + context.getString(R.string.global_default)
+        rendererDisplayNames = compatibleRenderers.rendererDisplayNames.toList() + context.getString(
+            R.string.global_default)
 
         val rIndex = rendererIds.indexOf(selectedInstance.getLaunchRenderer())
         selectedRendererIndex = if (rIndex == -1) rendererDisplayNames.size - 1 else rIndex

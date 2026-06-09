@@ -64,6 +64,8 @@ import net.kdt.pojavlaunch.progresskeeper.ProgressListener
 import net.kdt.pojavlaunch.ui.theme.PojavTheme
 import net.kdt.pojavlaunch.PojavApplication
 import net.kdt.pojavlaunch.Tools
+import net.kdt.pojavlaunch.kotlin.ui.viewmodel.ContentInstallerViewModel
+import net.kdt.pojavlaunch.kotlin.ui.viewmodel.DirectoryManagerViewModel
 import net.kdt.pojavlaunch.skin.AndroidSkinAnalyzer
 import net.kdt.pojavlaunch.skin.LocalUuidUtils
 import net.kdt.pojavlaunch.skin.LocalUuidUtils.toFormattedUuid
