@@ -95,7 +95,7 @@ public class JavaRunner {
         resolvFile = new File(Tools.DIR_DATA,"resolv.conf").getAbsolutePath();
 
         userArguments.add(0, "-Xms"+LauncherPreferences.PREF_RAM_ALLOCATION+"M");
-        userArguments.add(0, "-Xmx"+LauncherPreferences.PREF_RAM_ALLOCATION+"M");
+        userArguments.add(0, "-Xmx"+ LauncherPreferences.PREF_RAM_ALLOCATION+"M");
 
         ArrayList<String> overridableArguments = new ArrayList<>(Arrays.asList(
                 "-Djava.home=" + runtimeHome,

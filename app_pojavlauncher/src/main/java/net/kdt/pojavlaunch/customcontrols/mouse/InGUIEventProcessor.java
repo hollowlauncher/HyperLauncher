@@ -5,9 +5,9 @@ import android.view.View;
 
 import net.kdt.pojavlaunch.LwjglGlfwKeycode;
 import net.kdt.pojavlaunch.Tools;
-import net.kdt.pojavlaunch.prefs.LauncherPreferences;
 
 import net.kdt.pojavlaunch.CallbackBridge;
+import net.kdt.pojavlaunch.prefs.LauncherPreferences;
 
 public class InGUIEventProcessor extends TouchEventProcessor {
     public static final float FINGER_SCROLL_THRESHOLD = Tools.dpToPx(6);

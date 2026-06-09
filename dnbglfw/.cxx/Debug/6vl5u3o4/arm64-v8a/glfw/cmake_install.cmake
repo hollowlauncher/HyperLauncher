@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/ASHMEET/StudioProjects/HyperLauncherRework/dnbglfw/src/main/cpp/glfw
+# Install script for directory: C:/Users/ASHMEET/StudioProjects/HyperLauncher/dnbglfw/src/main/cpp/glfw
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -44,11 +44,11 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/ASHMEET/StudioProjects/HyperLauncherRework/dnbglfw/.cxx/Debug/6vl5u3o4/arm64-v8a/glfw/src/cmake_install.cmake")
+  include("C:/Users/ASHMEET/StudioProjects/HyperLauncher/dnbglfw/.cxx/Debug/6vl5u3o4/arm64-v8a/glfw/src/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/ASHMEET/StudioProjects/HyperLauncherRework/dnbglfw/.cxx/Debug/6vl5u3o4/arm64-v8a/glfw/docs/cmake_install.cmake")
+  include("C:/Users/ASHMEET/StudioProjects/HyperLauncher/dnbglfw/.cxx/Debug/6vl5u3o4/arm64-v8a/glfw/docs/cmake_install.cmake")
 endif()
 

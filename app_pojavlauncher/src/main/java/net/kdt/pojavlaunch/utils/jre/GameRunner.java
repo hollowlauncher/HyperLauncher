@@ -20,7 +20,6 @@ import net.kdt.pojavlaunch.multirt.Runtime;
 import net.kdt.pojavlaunch.plugins.LibraryPlugin;
 import net.kdt.pojavlaunch.prefs.LauncherPreferences;
 import net.kdt.pojavlaunch.skin.InvalidSkinException;
-import net.kdt.pojavlaunch.skin.LocalUuidUtils;
 import net.kdt.pojavlaunch.skin.PreparedAccount;
 import net.kdt.pojavlaunch.skin.SkinManager;
 import net.kdt.pojavlaunch.skin.SkinManagerKt;

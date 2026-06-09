@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/ASHMEET/StudioProjects/HyperLauncherRework/dnbglfw/src/main/cpp/glfw/src
+# Install script for directory: C:/Users/ASHMEET/StudioProjects/HyperLauncher/dnbglfw/src/main/cpp/glfw/src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

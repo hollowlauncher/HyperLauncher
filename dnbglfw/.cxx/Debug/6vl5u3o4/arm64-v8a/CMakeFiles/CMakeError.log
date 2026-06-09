@@ -1,13 +1,13 @@
 Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
-Change Dir: C:/Users/ASHMEET/StudioProjects/HyperLauncherRework/dnbglfw/.cxx/Debug/6vl5u3o4/arm64-v8a/CMakeFiles/CMakeTmp
+Change Dir: C:/Users/ASHMEET/StudioProjects/HyperLauncher/dnbglfw/.cxx/Debug/6vl5u3o4/arm64-v8a/CMakeFiles/CMakeTmp
 
-Run Build Command(s):C:\Users\ASHMEET\AppData\Local\Android\Sdk\cmake\3.22.1\bin\ninja.exe cmTC_52da7 && [1/2] Building C object CMakeFiles/cmTC_52da7.dir/src.c.o
-FAILED: CMakeFiles/cmTC_52da7.dir/src.c.o 
-C:\Users\ASHMEET\AppData\Local\Android\Sdk\ndk\29.0.14206865\toolchains\llvm\prebuilt\windows-x86_64\bin\clang.exe --target=aarch64-none-linux-android21 --sysroot=C:/Users/ASHMEET/AppData/Local/Android/Sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/windows-x86_64/sysroot -DCMAKE_HAVE_LIBC_PTHREAD  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fPIE -MD -MT CMakeFiles/cmTC_52da7.dir/src.c.o -MF CMakeFiles\cmTC_52da7.dir\src.c.o.d -o CMakeFiles/cmTC_52da7.dir/src.c.o -c C:/Users/ASHMEET/StudioProjects/HyperLauncherRework/dnbglfw/.cxx/Debug/6vl5u3o4/arm64-v8a/CMakeFiles/CMakeTmp/src.c
-C:/Users/ASHMEET/StudioProjects/HyperLauncherRework/dnbglfw/.cxx/Debug/6vl5u3o4/arm64-v8a/CMakeFiles/CMakeTmp/src.c:13:3: error: call to undeclared function 'pthread_cancel'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+Run Build Command(s):C:\Users\ASHMEET\AppData\Local\Android\Sdk\cmake\3.22.1\bin\ninja.exe cmTC_6b7b5 && [1/2] Building C object CMakeFiles/cmTC_6b7b5.dir/src.c.o
+FAILED: CMakeFiles/cmTC_6b7b5.dir/src.c.o 
+C:\Users\ASHMEET\AppData\Local\Android\Sdk\ndk\29.0.14206865\toolchains\llvm\prebuilt\windows-x86_64\bin\clang.exe --target=aarch64-none-linux-android21 --sysroot=C:/Users/ASHMEET/AppData/Local/Android/Sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/windows-x86_64/sysroot -DCMAKE_HAVE_LIBC_PTHREAD  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fPIE -MD -MT CMakeFiles/cmTC_6b7b5.dir/src.c.o -MF CMakeFiles\cmTC_6b7b5.dir\src.c.o.d -o CMakeFiles/cmTC_6b7b5.dir/src.c.o -c C:/Users/ASHMEET/StudioProjects/HyperLauncher/dnbglfw/.cxx/Debug/6vl5u3o4/arm64-v8a/CMakeFiles/CMakeTmp/src.c
+C:/Users/ASHMEET/StudioProjects/HyperLauncher/dnbglfw/.cxx/Debug/6vl5u3o4/arm64-v8a/CMakeFiles/CMakeTmp/src.c:13:3: error: call to undeclared function 'pthread_cancel'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
    13 |   pthread_cancel(thread);
       |   ^
-C:/Users/ASHMEET/StudioProjects/HyperLauncherRework/dnbglfw/.cxx/Debug/6vl5u3o4/arm64-v8a/CMakeFiles/CMakeTmp/src.c:13:3: note: did you mean 'pthread_once'?
+C:/Users/ASHMEET/StudioProjects/HyperLauncher/dnbglfw/.cxx/Debug/6vl5u3o4/arm64-v8a/CMakeFiles/CMakeTmp/src.c:13:3: note: did you mean 'pthread_once'?
 C:/Users/ASHMEET/AppData/Local/Android/Sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/include/pthread.h:250:5: note: 'pthread_once' declared here
   250 | int pthread_once(pthread_once_t* _Nonnull __once, void (* _Nonnull __init_routine)(void));
       |     ^
@@ -37,12 +37,12 @@ int main(void)
 }
 
 Determining if the function pthread_create exists in the pthreads failed with the following output:
-Change Dir: C:/Users/ASHMEET/StudioProjects/HyperLauncherRework/dnbglfw/.cxx/Debug/6vl5u3o4/arm64-v8a/CMakeFiles/CMakeTmp
+Change Dir: C:/Users/ASHMEET/StudioProjects/HyperLauncher/dnbglfw/.cxx/Debug/6vl5u3o4/arm64-v8a/CMakeFiles/CMakeTmp
 
-Run Build Command(s):C:\Users\ASHMEET\AppData\Local\Android\Sdk\cmake\3.22.1\bin\ninja.exe cmTC_400cf && [1/2] Building C object CMakeFiles/cmTC_400cf.dir/CheckFunctionExists.c.o
-[2/2] Linking C executable cmTC_400cf
-FAILED: cmTC_400cf 
-cmd.exe /C "cd . && C:\Users\ASHMEET\AppData\Local\Android\Sdk\ndk\29.0.14206865\toolchains\llvm\prebuilt\windows-x86_64\bin\clang.exe --target=aarch64-none-linux-android21 --sysroot=C:/Users/ASHMEET/AppData/Local/Android/Sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/windows-x86_64/sysroot -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -DCHECK_FUNCTION_EXISTS=pthread_create -static-libstdc++ -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--no-undefined-version -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments CMakeFiles/cmTC_400cf.dir/CheckFunctionExists.c.o -o cmTC_400cf  -lpthreads  -latomic -lm && cd ."
+Run Build Command(s):C:\Users\ASHMEET\AppData\Local\Android\Sdk\cmake\3.22.1\bin\ninja.exe cmTC_fc433 && [1/2] Building C object CMakeFiles/cmTC_fc433.dir/CheckFunctionExists.c.o
+[2/2] Linking C executable cmTC_fc433
+FAILED: cmTC_fc433 
+cmd.exe /C "cd . && C:\Users\ASHMEET\AppData\Local\Android\Sdk\ndk\29.0.14206865\toolchains\llvm\prebuilt\windows-x86_64\bin\clang.exe --target=aarch64-none-linux-android21 --sysroot=C:/Users/ASHMEET/AppData/Local/Android/Sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/windows-x86_64/sysroot -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -DCHECK_FUNCTION_EXISTS=pthread_create -static-libstdc++ -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--no-undefined-version -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments CMakeFiles/cmTC_fc433.dir/CheckFunctionExists.c.o -o cmTC_fc433  -lpthreads  -latomic -lm && cd ."
 ld.lld: error: unable to find library -lpthreads
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 ninja: build stopped: subcommand failed.
@@ -50,12 +50,12 @@ ninja: build stopped: subcommand failed.
 
 
 Determining if the function pthread_create exists in the pthread failed with the following output:
-Change Dir: C:/Users/ASHMEET/StudioProjects/HyperLauncherRework/dnbglfw/.cxx/Debug/6vl5u3o4/arm64-v8a/CMakeFiles/CMakeTmp
+Change Dir: C:/Users/ASHMEET/StudioProjects/HyperLauncher/dnbglfw/.cxx/Debug/6vl5u3o4/arm64-v8a/CMakeFiles/CMakeTmp
 
-Run Build Command(s):C:\Users\ASHMEET\AppData\Local\Android\Sdk\cmake\3.22.1\bin\ninja.exe cmTC_07508 && [1/2] Building C object CMakeFiles/cmTC_07508.dir/CheckFunctionExists.c.o
-[2/2] Linking C executable cmTC_07508
-FAILED: cmTC_07508 
-cmd.exe /C "cd . && C:\Users\ASHMEET\AppData\Local\Android\Sdk\ndk\29.0.14206865\toolchains\llvm\prebuilt\windows-x86_64\bin\clang.exe --target=aarch64-none-linux-android21 --sysroot=C:/Users/ASHMEET/AppData/Local/Android/Sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/windows-x86_64/sysroot -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -DCHECK_FUNCTION_EXISTS=pthread_create -static-libstdc++ -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--no-undefined-version -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments CMakeFiles/cmTC_07508.dir/CheckFunctionExists.c.o -o cmTC_07508  -lpthread  -latomic -lm && cd ."
+Run Build Command(s):C:\Users\ASHMEET\AppData\Local\Android\Sdk\cmake\3.22.1\bin\ninja.exe cmTC_f863b && [1/2] Building C object CMakeFiles/cmTC_f863b.dir/CheckFunctionExists.c.o
+[2/2] Linking C executable cmTC_f863b
+FAILED: cmTC_f863b 
+cmd.exe /C "cd . && C:\Users\ASHMEET\AppData\Local\Android\Sdk\ndk\29.0.14206865\toolchains\llvm\prebuilt\windows-x86_64\bin\clang.exe --target=aarch64-none-linux-android21 --sysroot=C:/Users/ASHMEET/AppData/Local/Android/Sdk/ndk/29.0.14206865/toolchains/llvm/prebuilt/windows-x86_64/sysroot -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security  -DCHECK_FUNCTION_EXISTS=pthread_create -static-libstdc++ -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--no-undefined-version -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments CMakeFiles/cmTC_f863b.dir/CheckFunctionExists.c.o -o cmTC_f863b  -lpthread  -latomic -lm && cd ."
 ld.lld: error: unable to find library -lpthread
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
 ninja: build stopped: subcommand failed.

@@ -1,4 +1,4 @@
-                        -HC:\Users\ASHMEET\StudioProjects\HyperLauncherRework\dnbglfw\src\main\cpp
+                        -HC:\Users\ASHMEET\StudioProjects\HyperLauncher\dnbglfw\src\main\cpp
 -DCMAKE_SYSTEM_NAME=Android
 -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 -DCMAKE_SYSTEM_VERSION=21
@@ -9,10 +9,10 @@
 -DCMAKE_ANDROID_NDK=C:\Users\ASHMEET\AppData\Local\Android\Sdk\ndk\29.0.14206865
 -DCMAKE_TOOLCHAIN_FILE=C:\Users\ASHMEET\AppData\Local\Android\Sdk\ndk\29.0.14206865\build\cmake\android.toolchain.cmake
 -DCMAKE_MAKE_PROGRAM=C:\Users\ASHMEET\AppData\Local\Android\Sdk\cmake\3.22.1\bin\ninja.exe
--DCMAKE_LIBRARY_OUTPUT_DIRECTORY=C:\Users\ASHMEET\StudioProjects\HyperLauncherRework\dnbglfw\build\intermediates\cxx\Debug\6vl5u3o4\obj\x86
--DCMAKE_RUNTIME_OUTPUT_DIRECTORY=C:\Users\ASHMEET\StudioProjects\HyperLauncherRework\dnbglfw\build\intermediates\cxx\Debug\6vl5u3o4\obj\x86
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=C:\Users\ASHMEET\StudioProjects\HyperLauncher\dnbglfw\build\intermediates\cxx\Debug\6vl5u3o4\obj\x86
+-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=C:\Users\ASHMEET\StudioProjects\HyperLauncher\dnbglfw\build\intermediates\cxx\Debug\6vl5u3o4\obj\x86
 -DCMAKE_BUILD_TYPE=Debug
--BC:\Users\ASHMEET\StudioProjects\HyperLauncherRework\dnbglfw\.cxx\Debug\6vl5u3o4\x86
+-BC:\Users\ASHMEET\StudioProjects\HyperLauncher\dnbglfw\.cxx\Debug\6vl5u3o4\x86
 -GNinja
                         Build command args: []
                         Version: 2

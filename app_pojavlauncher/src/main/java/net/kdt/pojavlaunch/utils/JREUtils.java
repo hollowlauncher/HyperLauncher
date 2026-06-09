@@ -5,7 +5,6 @@ import static net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_VSYNC_IN_ZINK;
 import static net.kdt.pojavlaunch.prefs.LauncherPreferences.PREF_ZINK_PREFER_SYSTEM_DRIVER;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.system.Os;
 import android.util.ArrayMap;
 import android.util.Log;

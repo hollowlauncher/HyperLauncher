@@ -25,6 +25,7 @@ public class InGameEventProcessor extends TouchEventProcessor {
         switch (motionEvent.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 mTracker.startTracking(motionEvent);
+
                 if(LauncherPreferences.PREF_DISABLE_GESTURES) break;
                 mEventTransitioned = false;
                 checkGestures();
