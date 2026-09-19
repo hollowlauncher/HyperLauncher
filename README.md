@@ -14,6 +14,10 @@
   <a href="https://ko-fi.com/ashmeetop"><img src="https://img.shields.io/badge/Support_me_on-Ko--fi-FF5E5B?style=for-the-badge&logo=kofi&logoColor=white" alt="Support me on Ko-fi"></a>
 </p>
 
+> [!WARNING]
+> **This project has been archived and is no longer maintained.**
+> Check out the new project: **[Hyper Launcher v3](https://github.com/hollowlauncher/Hyper_Launcher_v3)**
+
 ---
 
 ## Navigation
@@ -126,9 +130,9 @@ Hyper Launcher is licensed under [GNU LGPLv3](LICENSE).
 
 ## Contributing
 
-Contributions are welcome! We welcome any type of contribution, not only code. For example, you can help the wiki shape up or contribute to the [translation](https://crowdin.com/project/pojavlauncher).
+This repository is archived and read-only, so it no longer accepts issues or pull requests.
 
-Any code change should be submitted as a pull request. The description should explain what the code does and give steps to execute it.
+Contributions are welcome on the new project: **[Hyper Launcher v3](https://github.com/hollowlauncher/Hyper_Launcher_v3)**. We welcome any type of contribution, not only code.
 
 ---
 
